@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "678448474303",
+    "project_id": "wroti-77968",
+    "storage_bucket": "wroti-77968.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:678448474303:android:a51b2f5a210033e1ba3e0a",
+        "android_client_info": {
+          "package_name": "com.wrotiretail.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "678448474303-20m23l75mip47jkttivs90nt6q1vj3v1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNpzLiuQoBDzdawYw-U-f_ggKNaZt1VNY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "678448474303-20m23l75mip47jkttivs90nt6q1vj3v1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:678448474303:android:25ef30600dd8c922ba3e0a",
+        "android_client_info": {
+          "package_name": "com.wrotiretail.app.uat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "678448474303-20m23l75mip47jkttivs90nt6q1vj3v1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNpzLiuQoBDzdawYw-U-f_ggKNaZt1VNY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "678448474303-20m23l75mip47jkttivs90nt6q1vj3v1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

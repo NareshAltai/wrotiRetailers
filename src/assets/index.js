@@ -1,0 +1,10 @@
+export const logoImage = require('../assets/logo2x.png');
+export const newbox3x = require('../assets/newbox3x.png');
+export const processing3x = require('../assets/processing3x.png');
+export const scooter3x = require('../assets/scooter3x.png');
+export const BGI = require('../assets/BGI.png');
+export const logo = require('../assets/logo.png');
+export const Lock3x = require('../assets/Lock3x.png');
+export const resend3x = require('../assets/resend3x.png');
+export const e = require('../assets/e.png');
+export const product = require('../assets/product.png');
