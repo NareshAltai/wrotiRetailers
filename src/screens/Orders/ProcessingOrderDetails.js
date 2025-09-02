@@ -193,7 +193,7 @@ const OrdersScreen = ({navigation, route}) => {
 
   const updateStatusOrderByWorti = async () => {
     setRefreshing(true);
-    loadButton.getStartedButton.showLoading(true);
+    // loadButton.getStartedButton.showLoading(true);
     const api = new DeveloperAPIClient();
     let order_id = route.params.ID;
     let status_id = 15;
@@ -213,7 +213,7 @@ const OrdersScreen = ({navigation, route}) => {
       deliverBoyId,
       '3',
     );
-    loadButton.getStartedButton.showLoading(false);
+    // loadButton.getStartedButton.showLoading(false);
     if (statusdata.data != undefined) {
       if (status_id == 15) {
         Toast.showWithGravity(
@@ -384,27 +384,46 @@ const OrdersScreen = ({navigation, route}) => {
   }, []);
 
   const openwhatsapp = () => {
-    let productName = '';
-    for (let index = 0; index < ordersData.orders.products.length; index++) {
-      const element = ordersData.orders.products[index];
-      //console.log("element",element)
-      productName = productName + '\r\n' + element.name;
+    if (!ordersData?.orders) {
+      console.warn('ordersData.orders is missing');
+      return;
     }
-    //console.log("productname",productName)
-    let whatsappText =
-      `OrderId:${ordersData.orders.order_info.order_id}` +
-      `\r\nLocation:https://www.google.com/maps/place/${location[0]},${location[1]}` +
-      `\r\nCustomer Name : ${ordersData.orders.order_info.firstname}` +
-      `\r\nCustomer  Mobile : ${ordersData.orders.order_info.telephone}` +
-      `\r\nOrder Total : ${price}` +
-      `\r\nDate Added : ${moment
-        .utc(ordersData.orders.order_info.date_added)
-        .local()
-        .format('DD-MMM-YYYY, hh:mm')}` +
-      `\r\nProducts :${productName}` +
-      `\r\nPayment Mode : ${ordersData.orders.order_info.payment_method}`;
-    Linking.openURL(`whatsapp://send?text=${whatsappText}`);
+
+    const {products = [], order_info} = ordersData.orders;
+
+    if (!order_info) {
+      console.warn('order_info is missing');
+      return;
+    }
+
+    let productName = '';
+    for (let index = 0; index < products.length; index++) {
+      const element = products[index];
+      productName += `\r\n${element?.name ?? ''}`;
+    }
+
+    const whatsappText =
+      `OrderId: ${order_info.order_id ?? ''}` +
+      `\r\nLocation: https://www.google.com/maps/place/${location?.[0] ?? ''},${
+        location?.[1] ?? ''
+      }` +
+      `\r\nCustomer Name: ${order_info.firstname ?? ''}` +
+      `\r\nCustomer Mobile: ${order_info.telephone ?? ''}` +
+      `\r\nOrder Total: ${price ?? ''}` +
+      `\r\nDate Added: ${
+        order_info.date_added
+          ? moment
+              .utc(order_info.date_added)
+              .local()
+              .format('DD-MMM-YYYY, hh:mm')
+          : ''
+      }` +
+      `\r\nProducts: ${productName}` +
+      `\r\nPayment Mode: ${order_info.payment_method ?? ''}`;
+
+    Linking.openURL(`whatsapp://send?text=${encodeURIComponent(whatsappText)}`);
   };
+
   return (
     <View style={styles.container}>
       <>
@@ -1272,7 +1291,11 @@ const OrdersScreen = ({navigation, route}) => {
                             borderRadius: 13,
                           }}
                           descriptionStyle={{color: 'gray'}}
-                          titleStyle={{minWidth: 52, marginTop: -10}}
+                          titleStyle={{
+                            minWidth: 52,
+                            marginTop: -10,
+                            color: 'black',
+                          }}
                           innerCircle={'dot'}
                         />
                       );
@@ -1841,6 +1864,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginHorizontal: 5,
     marginVertical: 15,
+    paddingTop: 15,
   },
   mainHeader: {
     backgroundColor: '#ffffff',

@@ -27,6 +27,7 @@ import * as orderActions from '../../redux/actions/orderActions';
 import DeveloperAPIClient from '../../state/middlewares/DeveloperAPIClient';
 import {useIsFocused} from '@react-navigation/native';
 import {Divider} from 'react-native-paper';
+import Header from '../../components/Header';
 
 const AccountScreen = ({navigation}) => {
   const [userData, setuserData] = useState({});
@@ -124,7 +125,8 @@ const AccountScreen = ({navigation}) => {
         />
 
         <View style={styles.container}>
-          <View
+          <Header title={'Profile'} />
+          {/* <View
             style={{
               flexDirection: 'row',
               marginHorizontal: 5,
@@ -149,8 +151,8 @@ const AccountScreen = ({navigation}) => {
                 Profile
               </Text>
             </View>
-          </View>
-          <Divider />
+          </View> */}
+          {/* <Divider /> */}
           <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.body}>
               <View style={styles.card}>

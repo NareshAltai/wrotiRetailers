@@ -60,12 +60,11 @@ const OrdersScreen = ({navigation, route}) => {
     let allOrdersData = await api.getOrderDetails(UserMobile, orderId);
     setOrderHistory(allOrdersData.data.orders.historiesdata);
     setStoreType(store_type);
-    let LOC = JSON.parse(
-      allOrdersData.data.orders.order_info.shipping_custom_field,
-    );
+    let LOC = allOrdersData.data.orders.order_info.shipping_custom_field;
+
     //console.log("LOC+", LOC);
     if (LOC != false) {
-      const gps = LOC.location.split(',');
+      const gps = LOC?.location?.split(',');
       setlocation(gps);
     }
     //console.log("allordersdetails######", JSON.stringify(allOrdersData.data));
@@ -143,26 +142,45 @@ const OrdersScreen = ({navigation, route}) => {
   }, []);
 
   const openwhatsapp = () => {
-    let productName = '';
-    for (let index = 0; index < ordersData.orders.products.length; index++) {
-      const element = ordersData.orders.products[index];
-      //console.log("element",element)
-      productName = productName + '\r\n' + element.name;
+    try {
+      const orderInfo = ordersData?.orders?.order_info;
+      const products = ordersData?.orders?.products || [];
+
+      // build product names safely
+      const productName = products
+        .map(p => p?.name || '')
+        .filter(Boolean)
+        .join('\r\n');
+
+      const whatsappText =
+        `OrderId: ${orderInfo?.order_id || ''}` +
+        `\r\nLocation: https://www.google.com/maps/place/${
+          location?.[0] || ''
+        },${location?.[1] || ''}` +
+        `\r\nCustomer Name: ${orderInfo?.firstname || ''}` +
+        `\r\nCustomer Mobile: ${orderInfo?.telephone || ''}` +
+        `\r\nOrder Total: ${price || ''}` +
+        `\r\nDate Added: ${
+          orderInfo?.date_added
+            ? moment
+                .utc(orderInfo.date_added)
+                .local()
+                .format('DD-MMM-YYYY, hh:mm')
+            : ''
+        }` +
+        `\r\nProducts: ${productName}` +
+        `\r\nPayment Mode: ${orderInfo?.payment_method || ''}`;
+
+      if (whatsappText.trim()) {
+        Linking.openURL(
+          `whatsapp://send?text=${encodeURIComponent(whatsappText)}`,
+        );
+      } else {
+        console.warn('WhatsApp text is empty — not sending.');
+      }
+    } catch (error) {
+      console.error('openwhatsapp failed:', error);
     }
-    //console.log("productname",productName)
-    let whatsappText =
-      `OrderId:${ordersData.orders.order_info.order_id}` +
-      `\r\nLocation:https://www.google.com/maps/place/${location[0]},${location[1]}` +
-      `\r\nCustomer Name : ${ordersData.orders.order_info.firstname}` +
-      `\r\nCustomer  Mobile : ${ordersData.orders.order_info.telephone}` +
-      `\r\nOrder Total : ${price}` +
-      `\r\nDate Added : ${moment
-        .utc(ordersData.orders.order_info.date_added)
-        .local()
-        .format('DD-MMM-YYYY, hh:mm')}` +
-      `\r\nProducts :${productName}` +
-      `\r\nPayment Mode : ${ordersData.orders.order_info.payment_method}`;
-    Linking.openURL(`whatsapp://send?text=${whatsappText}`);
   };
 
   return (
@@ -935,7 +953,11 @@ const OrdersScreen = ({navigation, route}) => {
                           borderRadius: 13,
                         }}
                         descriptionStyle={{color: 'gray'}}
-                        titleStyle={{minWidth: 52, marginTop: -10}}
+                        titleStyle={{
+                          minWidth: 52,
+                          marginTop: -10,
+                          color: 'black',
+                        }}
                         innerCircle={'dot'}
                       />
                     );
@@ -1360,6 +1382,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginHorizontal: 5,
     marginVertical: 15,
+    paddingTop: 15,
   },
   mainHeader: {
     backgroundColor: '#ffffff',

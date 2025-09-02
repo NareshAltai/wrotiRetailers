@@ -22,7 +22,7 @@ import Toast from 'react-native-simple-toast';
 import ImagePicker from 'react-native-image-picker';
 import CustomLoadingButton from '../../components/CustomLoadingButton';
 
-const addOptionScreen = ({navigation, route}) => {
+const AddOptionScreen = ({navigation, route}) => {
   const [inputs, setInputs] = useState(['']);
   const [data, setData] = useState([]);
   const [screenName, setScreenName] = useState();
@@ -1025,4 +1025,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default addOptionScreen;
+export default AddOptionScreen;

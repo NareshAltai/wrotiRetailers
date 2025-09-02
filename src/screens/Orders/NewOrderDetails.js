@@ -72,7 +72,7 @@ const OrdersScreen = ({navigation, route}) => {
   const [customizedModal, setCustomizedModal] = React.useState(true);
 
   const updatestatusorder = async () => {
-    loadButton.getStartedButton.showLoading(true);
+    // loadButton.getStartedButton.showLoading(true);
     setRefreshing(true);
     //  console.log("=====", order_id, "customer_mobile", customer_mobile);
     const api = new DeveloperAPIClient();
@@ -107,7 +107,7 @@ const OrdersScreen = ({navigation, route}) => {
       '',
       deliveryType,
     );
-    loadButton.getStartedButton.showLoading(false);
+    // loadButton.getStartedButton.showLoading(false);
     if (statusdata.data != undefined) {
       Toast.showWithGravity(
         'Order Accepted Successfully',
@@ -214,9 +214,8 @@ const OrdersScreen = ({navigation, route}) => {
     let UserMobile = await AsyncStorage.getItem('MobileNumber');
     let allOrdersData = await api.getOrderDetails(UserMobile, orderId);
 
-    let LOC = JSON.parse(
-      allOrdersData.data.orders.order_info.shipping_custom_field,
-    );
+    let LOC = allOrdersData.data.orders.order_info.shipping_custom_field;
+
     if (LOC != false) {
       const gps = LOC.location.split(',');
       setlocation(gps);
@@ -953,6 +952,7 @@ const OrdersScreen = ({navigation, route}) => {
                             marginTop: -10,
                             fontFamily: 'Poppins-Medium',
                             marginLeft: 5,
+                            color: 'black',
                           }}
                         />
                       );
@@ -1380,6 +1380,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginHorizontal: 5,
     marginVertical: 15,
+    paddingTop: 15,
   },
   mainHeader: {
     backgroundColor: '#ffffff',

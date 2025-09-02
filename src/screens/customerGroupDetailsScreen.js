@@ -30,7 +30,7 @@ import Icon from 'react-native-vector-icons/EvilIcons';
 import {useIsFocused} from '@react-navigation/native';
 import CustomLoadingButton from '../components/CustomLoadingButton';
 
-const customerGroupDetailsScreen = ({navigation, route}) => {
+const CustomerGroupDetailsScreen = ({navigation, route}) => {
   const {colors} = useTheme();
   const theme = useTheme();
   const dispatch = useDispatch();
@@ -1401,7 +1401,7 @@ const customerGroupDetailsScreen = ({navigation, route}) => {
   );
 };
 
-export default customerGroupDetailsScreen;
+export default CustomerGroupDetailsScreen;
 
 const styles = StyleSheet.create({
   container: {

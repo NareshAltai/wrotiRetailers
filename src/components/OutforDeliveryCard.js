@@ -123,6 +123,7 @@ export default class OrderCard extends React.Component {
                   color: '#227b99',
                   fontFamily: 'Poppins-Medium',
                   alignSelf: 'center',
+                  color: '#000',
                 }}>
                 Delivery at Seat: {this.props.tableNumber}
               </Text>
@@ -137,6 +138,7 @@ export default class OrderCard extends React.Component {
                 fontFamily: 'Poppins-SemiBold',
                 flex: 1.8,
                 textAlign: 'left',
+                color: '#000',
               }}>
               {this.props.name}
             </Text>
@@ -147,6 +149,7 @@ export default class OrderCard extends React.Component {
                   fontFamily: 'Poppins-Regular',
                   textAlign: 'right',
                   flex: 1.3,
+                  color: '#000',
                 }}>
                 {/* {this.props.time} */}
                 {moment(`${this.props.time}`)
@@ -160,6 +163,7 @@ export default class OrderCard extends React.Component {
                   fontFamily: 'Poppins-Regular',
                   textAlign: 'right',
                   flex: 1.3,
+                  color: '#000',
                 }}>
                 {/* {this.props.time} */}
                 {moment
@@ -176,6 +180,7 @@ export default class OrderCard extends React.Component {
                 fontFamily: 'Poppins-Regular',
                 marginRight: 5,
                 letterSpacing: 3,
+                color: '#000',
               }}>
               #{this.props.ID}
             </Text>
@@ -206,6 +211,7 @@ export default class OrderCard extends React.Component {
                 fontFamily: 'Poppins-Bold',
                 textAlign: 'right',
                 flex: 1,
+                color: '#000',
               }}>
               {this.props.price}
             </Text>
@@ -339,8 +345,9 @@ export default class OrderCard extends React.Component {
                   fontFamily: 'Poppins-Bold',
                   flex: 1,
                   textAlign: 'right',
+                  color: '#000',
                 }}>
-                {/* Total {this.props.products.length} items */}
+                Total {this.props?.products?.length || '0'} items
               </Text>
             </View>
           </View>

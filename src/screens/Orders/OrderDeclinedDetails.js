@@ -879,7 +879,11 @@ const OrdersScreen = ({navigation, route}) => {
                           borderRadius: 13,
                         }}
                         descriptionStyle={{color: 'gray'}}
-                        titleStyle={{minWidth: 52, marginTop: -10}}
+                        titleStyle={{
+                          minWidth: 52,
+                          marginTop: -10,
+                          color: 'black',
+                        }}
                         innerCircle={'dot'}
                       />
                     );
@@ -1304,6 +1308,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginHorizontal: 5,
     marginVertical: 15,
+    paddingTop: 15,
   },
   mainHeader: {
     backgroundColor: '#ffffff',

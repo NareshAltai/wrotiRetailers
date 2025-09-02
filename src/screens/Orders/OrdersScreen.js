@@ -21,7 +21,7 @@ import DeliveredCard from '../../components/DeliveredCard';
 import CancelledCard from '../../components/CancelledCard';
 import Toast from 'react-native-simple-toast';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-// import OptionsMenu from "wroti-react-native-option-menu";
+import OptionsMenu from 'wroti-react-native-option-menu';
 import {AuthContext} from '../../components/context';
 import * as orderActions from '../../redux/actions/orderActions';
 import {useDispatch, useSelector} from 'react-redux';
@@ -637,16 +637,16 @@ const OrdersScreen = ({navigation, route}) => {
             </Text>
           </View>
           <View style={{flex: 1, alignItems: 'flex-end'}}>
-            {/* <OptionsMenu
+            <OptionsMenu
               button={MoreIcon}
               buttonStyle={{
                 width: 23,
                 height: 25.5,
-                resizeMode: "center",
+                resizeMode: 'center',
               }}
               options={MenuList}
               actions={[editPost, deletePost]}
-            /> */}
+            />
           </View>
         </View>
 
@@ -770,7 +770,7 @@ const OrdersScreen = ({navigation, route}) => {
                     numColumns={1}
                     nestedScrollEnabled={true}
                     renderItem={({item, index}) => {
-                      console.log('---------------------------->itens', item);
+                      // console.log('---------------------------->itens', item);
                       return (
                         <OrderCard
                           onPress={() =>
@@ -820,13 +820,7 @@ const OrdersScreen = ({navigation, route}) => {
                     }}
                   />
                 ) : (
-                  <Text
-                    style={{
-                      // flex: 1,
-                      textAlign: 'center',
-                      justifyContent: 'center',
-                      marginTop: '60%',
-                    }}>
+                  <Text style={styles.noOrderText}>
                     No Orders there to display...
                   </Text>
                 )}
@@ -892,13 +886,7 @@ const OrdersScreen = ({navigation, route}) => {
                     )}
                   />
                 ) : (
-                  <Text
-                    style={{
-                      // flex: 1,
-                      textAlign: 'center',
-                      justifyContent: 'center',
-                      marginTop: '60%',
-                    }}>
+                  <Text style={styles.noOrderText}>
                     No Orders there to display...
                   </Text>
                 )}
@@ -966,13 +954,7 @@ const OrdersScreen = ({navigation, route}) => {
                   )}
                 </View>
               ) : (
-                <Text
-                  style={{
-                    // flex: 1,
-                    textAlign: 'center',
-                    justifyContent: 'center',
-                    marginTop: '60%',
-                  }}>
+                <Text style={styles.noOrderText}>
                   No Orders there to display...
                 </Text>
               )}
@@ -1143,6 +1125,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginHorizontal: 5,
     marginVertical: 15,
+    paddingTop: 15,
   },
   mainHeader: {
     backgroundColor: '#ffffff',
@@ -1293,5 +1276,11 @@ const styles = StyleSheet.create({
     margin: 10,
     backgroundColor: '#FFFFFF',
     // fontStyle:'Poppins-SemiBold'
+  },
+  noOrderText: {
+    textAlign: 'center',
+    justifyContent: 'center',
+    marginTop: '60%',
+    color: '#000000',
   },
 });

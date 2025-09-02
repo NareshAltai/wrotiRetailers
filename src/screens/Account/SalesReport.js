@@ -14,6 +14,7 @@ import {
   Button,
   ActivityIndicator,
   PermissionsAndroid,
+  Platform,
 } from 'react-native';
 import {useTheme} from '@react-navigation/native';
 import {
@@ -31,6 +32,8 @@ import {useFocusEffect} from '@react-navigation/native';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
 import RNFetchBlob from 'react-native-blob-util';
+import Header from '../../components/Header';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const SalesReport = ({navigation, title}) => {
   const theme = useTheme();
@@ -41,6 +44,8 @@ const SalesReport = ({navigation, title}) => {
   const [visible, setVisible] = React.useState(false);
   const [selectedItem, setSelectedItem] = React.useState('day');
   const options = ['day', 'week', 'month', 'year'];
+  const [openStartDate, setOpenStartDate] = useState(false);
+  const [openEndDate, setOpenEndDate] = useState(false);
 
   const [visibleOrderType, setVisibleOrderType] = React.useState(false);
   const [selectedOrdertype, setSelectedOrderType] = React.useState(null);
@@ -112,13 +117,14 @@ const SalesReport = ({navigation, title}) => {
   }
 
   const requestStoragePermission = async () => {
-    if (Platform.OS === 'android') {
+    if (Platform.OS === 'android' && Platform.Version < 33) {
       try {
         const granted = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
           {
             title: 'Storage Permission Required',
             message: 'App needs access to your storage to download the file',
+            buttonPositive: 'OK',
           },
         );
         return granted === PermissionsAndroid.RESULTS.GRANTED;
@@ -127,7 +133,7 @@ const SalesReport = ({navigation, title}) => {
         return false;
       }
     }
-    return true;
+    return true; // On Android 13+ or iOS, no permission needed
   };
 
   const downloadContent = async () => {
@@ -325,36 +331,7 @@ const SalesReport = ({navigation, title}) => {
         backgroundColor="#F4F5F7"
         barStyle={theme.dark ? 'light-content' : 'dark-content'}
       />
-      <View
-        style={{
-          flexDirection: 'row',
-          paddingHorizontal: 14,
-          paddingVertical: 16,
-          backgroundColor: 'white',
-          elevation: 10,
-          shadowColor: '#040D1C14',
-          borderBottomWidth: 0.4,
-          borderBottomColor: '#21272E14',
-        }}>
-        <TouchableOpacity
-          activeOpacity={0.6}
-          onPress={() => navigation.goBack()}>
-          <Image
-            style={{width: 28, height: 28, resizeMode: 'center'}}
-            source={require('../../assets/back3x.png')}
-          />
-        </TouchableOpacity>
-        <View style={{marginLeft: 1, flexDirection: 'row'}}>
-          <Text
-            style={{
-              color: '#2B2520',
-              fontFamily: 'Poppins-Medium',
-              fontSize: 18,
-            }}>
-            Sales Reports{' '}
-          </Text>
-        </View>
-      </View>
+      <Header title={'Sales Reports'} />
 
       <View
         style={{
@@ -363,7 +340,24 @@ const SalesReport = ({navigation, title}) => {
           marginHorizontal: 30,
           justifyContent: 'space-between',
         }}>
-        <DatePicker
+        <TouchableOpacity
+          style={styles.dateBox}
+          onPress={() => setOpenStartDate(true)}>
+          <Text style={styles.dateText}>
+            {startDate ? moment(startDate).format('DD-MM-YYYY') : 'Start Date'}
+          </Text>
+          <Ionicons name="calendar-outline" size={20} color="#000" />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.dateBox}
+          onPress={() => setOpenEndDate(true)}>
+          <Text style={styles.dateText}>
+            {endDate ? moment(endDate).format('DD-MM-YYYY') : 'End Date'}
+          </Text>
+          <Ionicons name="calendar-outline" size={20} color="#000" />
+        </TouchableOpacity>
+        {/* <DatePicker
           style={styles.datePickerStyle}
           date={startDate}
           mode="date"
@@ -376,9 +370,9 @@ const SalesReport = ({navigation, title}) => {
             setEndDate(null);
           }}
           maxDate={new Date()}
-        />
+        /> */}
 
-        <DatePicker
+        {/* <DatePicker
           style={styles.datePickerStyle}
           date={endDate}
           mode="date"
@@ -391,7 +385,7 @@ const SalesReport = ({navigation, title}) => {
           }}
           minDate={startDate ? moment(startDate).toDate() : new Date()}
           maxDate={new Date()}
-        />
+        /> */}
       </View>
 
       <View style={{flexDirection: 'row'}}>
@@ -609,12 +603,39 @@ const SalesReport = ({navigation, title}) => {
           Total
         </Text>
       </View>
+      <DatePicker
+        modal
+        open={openStartDate}
+        date={startDate || new Date()}
+        mode="date"
+        maximumDate={new Date()}
+        onConfirm={date => {
+          setOpenStartDate(false);
+          setStartDate(date);
+          setEndDate(null); // reset end date if start changes
+        }}
+        onCancel={() => setOpenStartDate(false)}
+      />
+
+      <DatePicker
+        modal
+        open={openEndDate}
+        date={endDate || new Date()}
+        mode="date"
+        minimumDate={endDate || undefined}
+        maximumDate={new Date()}
+        onConfirm={date => {
+          setOpenEndDate(false);
+          setEndDate(date);
+        }}
+        onCancel={() => setOpenEndDate(false)}
+      />
 
       <ScrollView>
         {initialLoading ? (
           <ActivityIndicator size="large" color="green" />
         ) : totalSales.length === 0 ? (
-          <Text style={{textAlign: 'center', margin: 20}}>
+          <Text style={{textAlign: 'center', margin: 20, color: '#000'}}>
             No sales report to display
           </Text>
         ) : (
@@ -704,5 +725,23 @@ const styles = StyleSheet.create({
   },
   valueText: {
     marginLeft: 5,
+  },
+  dateBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 6,
+    flex: 1,
+    marginHorizontal: 5,
+    justifyContent: 'space-between',
+  },
+  dateText: {
+    fontFamily: 'Poppins-Medium',
+    fontSize: 12,
+    color: '#000',
   },
 });

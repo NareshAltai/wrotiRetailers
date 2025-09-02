@@ -30,7 +30,7 @@ import CustomLoadingButton from '../../components/CustomLoadingButton';
 // import Modal from 'react-native-modal';
 // import CheckBox from 'react-native-check-box';
 
-const editProductScreen = ({navigation, route}) => {
+const EditProductScreen = ({navigation, route}) => {
   const {colors} = useTheme();
   const theme = useTheme();
   const [name, setname] = React.useState();
@@ -1679,7 +1679,7 @@ const editProductScreen = ({navigation, route}) => {
   );
 };
 
-export default editProductScreen;
+export default EditProductScreen;
 
 const styles = StyleSheet.create({
   input: {

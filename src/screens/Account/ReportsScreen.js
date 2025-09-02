@@ -27,6 +27,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {FlatList} from 'react-native-gesture-handler';
 import Toast from 'react-native-simple-toast';
 import {useFocusEffect} from '@react-navigation/native';
+import Header from '../../components/Header';
 
 const ReportsScreen = ({navigation}) => {
   const theme = useTheme();
@@ -37,36 +38,7 @@ const ReportsScreen = ({navigation}) => {
         backgroundColor="#F4F5F7"
         barStyle={theme.dark ? 'light-content' : 'dark-content'}
       />
-      <View
-        style={{
-          flexDirection: 'row',
-          paddingHorizontal: 14,
-          paddingVertical: 16,
-          backgroundColor: 'white',
-          elevation: 10,
-          shadowColor: '#040D1C14',
-          borderBottomWidth: 0.4,
-          borderBottomColor: '#21272E14',
-        }}>
-        <TouchableOpacity
-          activeOpacity={0.6}
-          onPress={() => navigation.goBack()}>
-          <Image
-            style={{width: 28, height: 28, resizeMode: 'center'}}
-            source={require('../../assets/back3x.png')}
-          />
-        </TouchableOpacity>
-        <View style={{marginLeft: 1, flexDirection: 'row'}}>
-          <Text
-            style={{
-              color: '#2B2520',
-              fontFamily: 'Poppins-Medium',
-              fontSize: 18,
-            }}>
-            Reports{' '}
-          </Text>
-        </View>
-      </View>
+      <Header title={'Reports'} />
 
       <TouchableOpacity
         onPress={() => navigation.navigate('SalesReport')}

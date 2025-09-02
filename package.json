@@ -12,7 +12,9 @@
     "postinstall": "patch-package"
   },
   "dependencies": {
+    "@notifee/react-native": "^7.8.0",
     "@react-native-async-storage/async-storage": "~2.0.0",
+    "@react-native-community/checkbox": "^0.5.20",
     "@react-native-community/geolocation": "~3.4.0",
     "@react-native-firebase/app": "^23.1.2",
     "@react-native-firebase/messaging": "^23.1.2",
@@ -52,11 +54,12 @@
     "react-native-swiper": "^1.6.0",
     "react-native-timeline-flatlist": "0.8.0",
     "react-native-vector-icons": "~10.2.0",
-    "react-native-version-check": "^3.5.0",
+    "react-native-version-check": "^3.4.4",
     "react-redux": "~9.1.2",
     "redux": "~5.0.1",
     "redux-thunk": "~3.1.0",
-    "socket.io-client": "4.7.5"
+    "socket.io-client": "4.7.5",
+    "wroti-react-native-option-menu": "github:raghu-golla/Option-Menu-React-Native"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

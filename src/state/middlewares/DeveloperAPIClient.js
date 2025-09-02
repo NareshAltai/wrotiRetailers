@@ -1779,7 +1779,7 @@ export default class DeveloperAPIClient extends RestClient {
       limit: `${PAGE_LIMIT}`,
     };
 
-    console.log('input data ===>', inputData);
+    console.log('input data ===>', inputData, 'url', url);
 
     let apiResponse = await Api.post(url, inputData, '', '', {
       'Content-Type': 'application/json',

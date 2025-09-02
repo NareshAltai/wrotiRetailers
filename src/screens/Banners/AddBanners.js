@@ -207,13 +207,14 @@ const AddBanners = ({navigation, route}) => {
       <View
         style={{
           flexDirection: 'row',
-          paddingHorizontal: 14,
+          paddingHorizontal: 8,
           paddingVertical: 16,
           backgroundColor: 'white',
           elevation: 10,
           shadowColor: '#040D1C14',
           borderBottomWidth: 0.4,
           borderBottomColor: '#21272E14',
+          marginTop: 10,
         }}>
         <TouchableOpacity
           activeOpacity={0.6}

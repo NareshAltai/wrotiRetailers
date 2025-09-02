@@ -651,6 +651,7 @@ const CategoryScreen = ({navigation}) => {
           flexDirection: 'row',
           marginHorizontal: 5,
           marginVertical: 15,
+          paddingTop: 15,
         }}>
         <TouchableOpacity
           activeOpacity={0.6}

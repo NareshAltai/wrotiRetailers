@@ -22,6 +22,7 @@ import {useIsFocused} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {clone} from 'lodash';
 import Toast from 'react-native-simple-toast';
+import Header from '../components/Header';
 
 const TemplateListScreen = ({navigation}) => {
   const theme = useTheme();
@@ -226,32 +227,7 @@ const TemplateListScreen = ({navigation}) => {
         backgroundColor="#F4F5F7"
         barStyle={theme.dark ? 'light-content' : 'dark-content'}
       />
-      <View
-        style={{
-          flexDirection: 'row',
-          marginHorizontal: 5,
-          marginVertical: 15,
-        }}>
-        <TouchableOpacity
-          activeOpacity={0.6}
-          onPress={() => navigation.goBack()}>
-          <Image
-            style={{width: 28, height: 28, resizeMode: 'center'}}
-            source={require('../assets/back3x.png')}
-          />
-        </TouchableOpacity>
-        <View style={{marginLeft: 1, marginTop: 3.5}}>
-          <Text
-            style={{
-              color: '#2B2520',
-              fontFamily: 'Poppins-Medium',
-              fontSize: 16,
-            }}>
-            Outlet Open / Close Timings
-          </Text>
-        </View>
-      </View>
-      <Divider />
+      <Header title={'Outlet Open / Close Timings'} />
       <View style={{marginBottom: 40}}>
         <FlatList
           data={displayStoreTimings}

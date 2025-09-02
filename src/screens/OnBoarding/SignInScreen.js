@@ -175,11 +175,14 @@ const SignInScreen = ({navigation, route}) => {
     <View style={styles.container}>
       <>
         <StatusBar backgroundColor="#F1F9F3" barStyle="light-content" />
-        <ScrollView keyboardShouldPersistTaps="always" style={{flex: 1}}>
+        <ScrollView keyboardShouldPersistTaps="handled" style={{flex: 1}}>
           <KeyboardAvoidingView>
             <View style={{alignItems: 'center'}}>
               <View>
-                <ImageBackground style={{height: 350, width: 390}} source={BGI}>
+                <ImageBackground
+                  // resizeMode="contain"
+                  style={{height: 350, width: '100%', paddingTop: '8%'}}
+                  source={BGI}>
                   <View style={{marginTop: 5, height: 200, borderWidth: 0}}>
                     {/* <SliderBox
                       dotColor="#34A549"
@@ -308,9 +311,9 @@ const SignInScreen = ({navigation, route}) => {
                   value={password}
                 />
                 <Icon
-                  style={{padding: 15}}
+                  style={{marginRight: 10}}
                   name={hidePass ? 'eye' : 'eye-slash'}
-                  size={20}
+                  size={18}
                   onPress={() => setHidePass(!hidePass)}
                   color="grey"
                 />

@@ -28,6 +28,7 @@ import * as orderActions from '../../redux/actions/orderActions';
 import DeveloperAPIClient from '../../state/middlewares/DeveloperAPIClient';
 import {useIsFocused} from '@react-navigation/native';
 import {Divider} from 'react-native-paper';
+import Header from '../../components/Header';
 
 const StoreSettingsScreen = ({navigation}) => {
   const [userData, setuserData] = useState({});
@@ -125,33 +126,7 @@ const StoreSettingsScreen = ({navigation}) => {
         />
 
         <View style={styles.container}>
-          <View
-            style={{
-              flexDirection: 'row',
-              marginHorizontal: 5,
-              marginVertical: 15,
-            }}>
-            <TouchableOpacity
-              activeOpacity={0.6}
-              onPress={() => navigation.goBack()}>
-              <Image
-                style={{width: 28, height: 28, resizeMode: 'center'}}
-                source={require('../../assets/back3x.png')}
-              />
-            </TouchableOpacity>
-            <View style={{marginLeft: 5}}>
-              <Text
-                style={{
-                  color: '#0F0F0F',
-                  fontFamily: 'Poppins-Bold',
-                  fontSize: 16,
-                  marginTop: 2,
-                }}>
-                Store Settings
-              </Text>
-            </View>
-          </View>
-          <Divider />
+          <Header title={'Store Settings'} />
           <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.body}>
               <View style={styles.card}>

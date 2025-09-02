@@ -109,7 +109,12 @@ const BannersList = ({navigation}) => {
         renderItem={({item}) => (
           <>
             <View style={{flexDirection: 'row'}}>
-              <Text style={{fontSize: 14, fontFamily: 'Poppins-Bold'}}>
+              <Text
+                style={{
+                  fontSize: 14,
+                  fontFamily: 'Poppins-Bold',
+                  color: '#000',
+                }}>
                 Banner Name
               </Text>
               <Text
@@ -117,6 +122,7 @@ const BannersList = ({navigation}) => {
                   fontSize: 14,
                   fontFamily: 'Poppins-Bold',
                   marginLeft: '2%',
+                  color: '#000',
                 }}>
                 :
               </Text>
@@ -125,12 +131,18 @@ const BannersList = ({navigation}) => {
                   fontSize: 14,
                   fontFamily: 'Poppins-Medium',
                   marginLeft: 10,
+                  color: '#000',
                 }}>
                 {item.banner_name}
               </Text>
             </View>
             <View style={{flexDirection: 'row'}}>
-              <Text style={{fontSize: 14, fontFamily: 'Poppins-Bold'}}>
+              <Text
+                style={{
+                  fontSize: 14,
+                  fontFamily: 'Poppins-Bold',
+                  color: '#000',
+                }}>
                 Status
               </Text>
               <Text
@@ -138,6 +150,7 @@ const BannersList = ({navigation}) => {
                   fontSize: 14,
                   fontFamily: 'Poppins-Bold',
                   marginLeft: '19%',
+                  color: '#000',
                 }}>
                 :
               </Text>
@@ -146,12 +159,18 @@ const BannersList = ({navigation}) => {
                   fontSize: 14,
                   fontFamily: 'Poppins-Medium',
                   marginLeft: 10,
+                  color: '#000',
                 }}>
                 {status === true ? 'Active' : 'Inactive'}
               </Text>
             </View>
             <View style={{flexDirection: 'row', marginTop: 5}}>
-              <Text style={{fontSize: 14, fontFamily: 'Poppins-Bold'}}>
+              <Text
+                style={{
+                  fontSize: 14,
+                  fontFamily: 'Poppins-Bold',
+                  color: '#000',
+                }}>
                 Sequence
               </Text>
               <Text
@@ -159,6 +178,7 @@ const BannersList = ({navigation}) => {
                   fontSize: 14,
                   fontFamily: 'Poppins-Bold',
                   marginLeft: '11%',
+                  color: '#000',
                 }}>
                 :
               </Text>
@@ -167,13 +187,19 @@ const BannersList = ({navigation}) => {
                   fontSize: 14,
                   fontFamily: 'Poppins-Medium',
                   marginLeft: 10,
+                  color: '#000',
                 }}>
                 {item.sequence}
               </Text>
             </View>
 
             <View style={{flexDirection: 'row', marginTop: 5}}>
-              <Text style={{fontSize: 14, fontFamily: 'Poppins-Bold'}}>
+              <Text
+                style={{
+                  fontSize: 14,
+                  fontFamily: 'Poppins-Bold',
+                  color: '#000',
+                }}>
                 Banners URL
               </Text>
               <Text
@@ -181,6 +207,7 @@ const BannersList = ({navigation}) => {
                   fontSize: 14,
                   fontFamily: 'Poppins-Bold',
                   marginLeft: '5%',
+                  color: '#000',
                 }}>
                 :
               </Text>
@@ -268,6 +295,7 @@ const BannersList = ({navigation}) => {
           shadowColor: '#040D1C14',
           borderBottomWidth: 0.4,
           borderBottomColor: '#21272E14',
+          marginTop: 15,
         }}>
         <TouchableOpacity
           activeOpacity={0.6}
@@ -330,6 +358,7 @@ const BannersList = ({navigation}) => {
                 fontSize: 14,
                 alignSelf: 'center',
                 marginTop: '40%',
+                color: '#000',
               }}>
               No banners to display
             </Text>

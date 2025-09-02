@@ -720,7 +720,12 @@ const ProductScreen = ({navigation}) => {
               marginHorizontal: 5,
               marginVertical: 15,
             }}>
-            <View style={{flexDirection: 'row', marginHorizontal: 5}}>
+            <View
+              style={{
+                flexDirection: 'row',
+                marginHorizontal: 5,
+                paddingTop: 25,
+              }}>
               <View
                 style={{
                   height: 40,

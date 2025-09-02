@@ -92,7 +92,7 @@ const Banner = ({
               style={{
                 width: slideWidth,
                 // height,
-                borderRadius: wp(28),
+                // borderRadius: wp(28),
                 overflow: 'hidden',
                 marginRight: index === data.length - 1 ? 0 : GAP,
               }}>
@@ -102,7 +102,7 @@ const Banner = ({
                   width: '100%',
                   height: '100%',
                 }}
-                resizeMode="cover"
+                resizeMode="contain"
               />
             </TouchableOpacity>
           );

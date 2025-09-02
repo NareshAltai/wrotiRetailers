@@ -87,9 +87,7 @@ const OrdersScreen = ({navigation, route}) => {
     );
     setOrderHistory(allOrdersData.data.orders.historiesdata);
     setStoreType(store_type);
-    let LOC = JSON.parse(
-      allOrdersData.data.orders.order_info.shipping_custom_field,
-    );
+    let LOC = allOrdersData.data.orders.order_info.shipping_custom_field;
     //console.log("LOC+", LOC);
     if (LOC != false) {
       const gps = LOC.location.split(',');
@@ -151,26 +149,45 @@ const OrdersScreen = ({navigation, route}) => {
   }, []);
 
   const openwhatsapp = () => {
-    let productName = '';
-    for (let index = 0; index < ordersData.orders.products.length; index++) {
-      const element = ordersData.orders.products[index];
-      //console.log("element",element)
-      productName = productName + '\r\n' + element.name;
+    try {
+      const orderInfo = ordersData?.orders?.order_info;
+      const products = ordersData?.orders?.products || [];
+
+      // safely build product names
+      const productName = products
+        .map(item => item?.name || '')
+        .filter(Boolean) // remove empty strings
+        .join('\r\n');
+
+      const whatsappText =
+        `OrderId: ${orderInfo?.order_id || ''}` +
+        `\r\nLocation: https://www.google.com/maps/place/${
+          location?.[0] || ''
+        },${location?.[1] || ''}` +
+        `\r\nCustomer Name: ${orderInfo?.firstname || ''}` +
+        `\r\nCustomer Mobile: ${orderInfo?.telephone || ''}` +
+        `\r\nOrder Total: ${price || ''}` +
+        `\r\nDate Added: ${
+          orderInfo?.date_added
+            ? moment
+                .utc(orderInfo.date_added)
+                .local()
+                .format('DD-MMM-YYYY, hh:mm')
+            : ''
+        }` +
+        `\r\nProducts: ${productName}` +
+        `\r\nPayment Mode: ${orderInfo?.payment_method || ''}`;
+
+      if (whatsappText.trim()) {
+        Linking.openURL(
+          `whatsapp://send?text=${encodeURIComponent(whatsappText)}`,
+        );
+      } else {
+        console.warn('WhatsApp message is empty, not opening.');
+      }
+    } catch (err) {
+      console.error('Failed to open WhatsApp:', err);
     }
-    //console.log("productname",productName)
-    let whatsappText =
-      `OrderId:${ordersData.orders.order_info.order_id}` +
-      `\r\nLocation:https://www.google.com/maps/place/${location[0]},${location[1]}` +
-      `\r\nCustomer Name : ${ordersData.orders.order_info.firstname}` +
-      `\r\nCustomer  Mobile : ${ordersData.orders.order_info.telephone}` +
-      `\r\nOrder Total : ${price}` +
-      `\r\nDate Added : ${moment
-        .utc(ordersData.orders.order_info.date_added)
-        .local()
-        .format('DD-MMM-YYYY, hh:mm')}` +
-      `\r\nProducts :${productName}` +
-      `\r\nPayment Mode : ${ordersData.orders.order_info.payment_method}`;
-    Linking.openURL(`whatsapp://send?text=${whatsappText}`);
   };
 
   return (
@@ -189,55 +206,6 @@ const OrdersScreen = ({navigation, route}) => {
             source={require('../../assets/back3x.png')}
           />
         </TouchableOpacity>
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => {
-            setModalVisible(!modalVisible);
-          }}>
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <View>
-                <Image
-                  style={{
-                    alignSelf: 'center',
-                  }}
-                  source={{
-                    width: '100%',
-                    height: '93.5%',
-                    uri: prescriptionImageUrl,
-                  }}
-                />
-              </View>
-              <TouchableOpacity
-                style={{
-                  width: '100%',
-                  paddingTop: 11,
-                  paddingBottom: 15,
-                  backgroundColor: '#51AF5E',
-                  borderRadius: 10,
-                  borderWidth: 1,
-                  borderColor: '#fff',
-                }}
-                onPress={() => {
-                  setModalVisible(!modalVisible);
-                }}>
-                <Text
-                  style={{
-                    color: '#fff',
-                    textAlign: 'center',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    fontSize: 16,
-                  }}>
-                  {' '}
-                  Close{' '}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </Modal>
         {ordersData && (
           <View style={{flexDirection: 'row', flex: 1, textAlign: 'left'}}>
             <Text style={styles.headerTitle}>Order Details </Text>
@@ -897,7 +865,11 @@ const OrdersScreen = ({navigation, route}) => {
                           borderRadius: 13,
                         }}
                         descriptionStyle={{color: 'gray'}}
-                        titleStyle={{minWidth: 52, marginTop: -10}}
+                        titleStyle={{
+                          minWidth: 52,
+                          marginTop: -10,
+                          color: 'black',
+                        }}
                         innerCircle={'dot'}
                       />
                     );
@@ -1200,6 +1172,55 @@ const OrdersScreen = ({navigation, route}) => {
               </TouchableOpacity>
             </View>
           </RBSheet>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => {
+              setModalVisible(!modalVisible);
+            }}>
+            <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+                <View>
+                  <Image
+                    style={{
+                      alignSelf: 'center',
+                    }}
+                    source={{
+                      width: '100%',
+                      height: '93.5%',
+                      uri: prescriptionImageUrl,
+                    }}
+                  />
+                </View>
+                <TouchableOpacity
+                  style={{
+                    width: '100%',
+                    paddingTop: 11,
+                    paddingBottom: 15,
+                    backgroundColor: '#51AF5E',
+                    borderRadius: 10,
+                    borderWidth: 1,
+                    borderColor: '#fff',
+                  }}
+                  onPress={() => {
+                    setModalVisible(!modalVisible);
+                  }}>
+                  <Text
+                    style={{
+                      color: '#fff',
+                      textAlign: 'center',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      fontSize: 16,
+                    }}>
+                    {' '}
+                    Close{' '}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
         </View>
       </ScrollView>
     </View>
@@ -1266,6 +1287,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginHorizontal: 5,
     marginVertical: 15,
+    paddingTop: 15,
   },
   mainHeader: {
     backgroundColor: '#ffffff',

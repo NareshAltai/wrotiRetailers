@@ -40,6 +40,7 @@ import {isReadyRef} from './src/utils/RootNavigation';
 import {check, PERMISSIONS, request, RESULTS} from 'react-native-permissions';
 import {logoImage} from './src/assets';
 import {configureStore} from '@reduxjs/toolkit';
+import notifee, {AndroidImportance} from '@notifee/react-native';
 
 const rootReducer = combineReducers({
   home: homeReducer,
@@ -200,6 +201,7 @@ const App = () => {
 
   const getFcmToken = async () => {
     const fcmToken = await messaging().getToken();
+    console.log('O====================> ~ getFcmToken ~ fcmToken:', fcmToken);
   };
 
   const requestNotificationPermission = async () => {
@@ -242,11 +244,51 @@ const App = () => {
     };
   }, []);
 
+  // useEffect(() => {
+  //   setTimeout(async () => {
+  //     requestUserPermission();
+  //     let userToken;
+  //     userToken = null;
+  //     try {
+  //       userToken = await AsyncStorage.getItem('userToken');
+  //     } catch (e) {
+  //       console.log(e);
+  //     }
+  //     dispatch({type: 'LOGIN', token: userToken});
+  //   }, 1000);
+
+  //   const unsubscribe = messaging().onMessage(async remoteMessage => {
+  //     dispatch({type: 'NEWORDERALERT', refreshOrders: true});
+  //     PushNotification.createChannel(
+  //       {
+  //         channelId: 'wroti-id', // (required)
+  //         channelName: 'My Wroti', // (required)
+  //         channelDescription: '', // (optional) default: undefined.
+  //         playSound: true, // (optional) default: true
+  //         soundName: 'notifications.mp3', // (optional) See `soundName` parameter of `localNotification` function
+  //         importance: 4, // (optional) default: 4. Int value of the Android notification importance
+  //         vibrate: true, // (optional) default: true. Creates the default vibration patten if true.
+  //       },
+  //       created => console.log(`createChannel returned '${created}'`), // (optional) callback returns whether the channel was created, false means it already existed.
+  //     );
+  //     PushNotification.localNotification({
+  //       message: remoteMessage.notification.body,
+  //       title: remoteMessage.notification.title,
+  //       channelId: 'wroti-id', // (required)
+  //       channelName: 'My Wroti',
+  //       soundName: 'notifications.mp3',
+  //       vibrate: true,
+  //     });
+  //   });
+  //   messaging().setBackgroundMessageHandler(async remoteMessage => {
+  //     dispatch({type: 'NEWORDERALERT', refreshOrders: true});
+  //   });
+  //   return unsubscribe;
+  // }, []);
   useEffect(() => {
     setTimeout(async () => {
       requestUserPermission();
-      let userToken;
-      userToken = null;
+      let userToken = null;
       try {
         userToken = await AsyncStorage.getItem('userToken');
       } catch (e) {
@@ -255,32 +297,60 @@ const App = () => {
       dispatch({type: 'LOGIN', token: userToken});
     }, 1000);
 
+    // Foreground message handler
     const unsubscribe = messaging().onMessage(async remoteMessage => {
       dispatch({type: 'NEWORDERALERT', refreshOrders: true});
-      PushNotification.createChannel(
-        {
-          channelId: 'wroti-id', // (required)
-          channelName: 'My Wroti', // (required)
-          channelDescription: '', // (optional) default: undefined.
-          playSound: true, // (optional) default: true
-          soundName: 'notifications.mp3', // (optional) See `soundName` parameter of `localNotification` function
-          importance: 4, // (optional) default: 4. Int value of the Android notification importance
-          vibrate: true, // (optional) default: true. Creates the default vibration patten if true.
+
+      // Create Android channel (only once)
+      const channelId = await notifee.createChannel({
+        id: 'wroti-id',
+        name: 'My Wroti',
+        sound: 'notifications', // without extension, Notifee picks correct format
+        importance: AndroidImportance.HIGH,
+        vibration: true,
+      });
+
+      // Show notification with Notifee
+      await notifee.displayNotification({
+        title: remoteMessage.notification?.title || 'New Notification',
+        body: remoteMessage.notification?.body || '',
+        android: {
+          channelId,
+          sound: 'notifications',
+          smallIcon: 'ic_launcher', // ensure you have this in res/mipmap
+          pressAction: {
+            id: 'default',
+          },
         },
-        created => console.log(`createChannel returned '${created}'`), // (optional) callback returns whether the channel was created, false means it already existed.
-      );
-      PushNotification.localNotification({
-        message: remoteMessage.notification.body,
-        title: remoteMessage.notification.title,
-        channelId: 'wroti-id', // (required)
-        channelName: 'My Wroti',
-        soundName: 'notifications.mp3',
-        vibrate: true,
       });
     });
+
+    // Background & quit state handler
     messaging().setBackgroundMessageHandler(async remoteMessage => {
       dispatch({type: 'NEWORDERALERT', refreshOrders: true});
+
+      const channelId = await notifee.createChannel({
+        id: 'wroti-id',
+        name: 'My Wroti',
+        sound: 'notifications',
+        importance: AndroidImportance.HIGH,
+        vibration: true,
+      });
+
+      await notifee.displayNotification({
+        title: remoteMessage.notification?.title || 'New Notification',
+        body: remoteMessage.notification?.body || '',
+        android: {
+          channelId,
+          sound: 'notifications',
+          smallIcon: 'ic_launcher',
+          pressAction: {
+            id: 'default',
+          },
+        },
+      });
     });
+
     return unsubscribe;
   }, []);
 

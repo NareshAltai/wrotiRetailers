@@ -14,7 +14,9 @@ import {
   Button,
   ActivityIndicator,
   PermissionsAndroid,
+  Platform,
 } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useTheme} from '@react-navigation/native';
 import {
   Divider,
@@ -30,7 +32,8 @@ import Toast from 'react-native-simple-toast';
 import {useFocusEffect} from '@react-navigation/native';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
-import RNFetchBlob from 'react-native-blob-util';
+import RNBlobUtil from 'react-native-blob-util';
+import Header from '../../components/Header';
 
 const CustomerOrderReport = ({navigation, title}) => {
   const theme = useTheme();
@@ -47,6 +50,8 @@ const CustomerOrderReport = ({navigation, title}) => {
   const [isFirstLoad, setIsFirstLoad] = useState(true);
   const [isResetting, setIsResetting] = useState(false);
   const [initialLoading, setInitialLoading] = useState(false);
+  const [openStartDate, setOpenStartDate] = useState(false);
+  const [openEndDate, setOpenEndDate] = useState(false);
 
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
@@ -158,7 +163,7 @@ const CustomerOrderReport = ({navigation, title}) => {
   };
 
   const loadMoreData = () => {
-    if (!loading && totalSales.length < total) {
+    if (!loading && totalSales?.length < total) {
       const nextPage = page + 1;
       setPage(nextPage);
       salesReports(nextPage);
@@ -166,13 +171,14 @@ const CustomerOrderReport = ({navigation, title}) => {
   };
 
   const requestStoragePermission = async () => {
-    if (Platform.OS === 'android') {
+    if (Platform.OS === 'android' && Platform.Version < 33) {
       try {
         const granted = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
           {
             title: 'Storage Permission Required',
             message: 'App needs access to your storage to download the file',
+            buttonPositive: 'OK',
           },
         );
         return granted === PermissionsAndroid.RESULTS.GRANTED;
@@ -181,39 +187,40 @@ const CustomerOrderReport = ({navigation, title}) => {
         return false;
       }
     }
-    return true;
+    return true; // On Android 13+ or iOS, no permission needed
   };
 
   const downloadContent = async () => {
     const hasPermission = await requestStoragePermission();
     if (!hasPermission) {
-      Alert.alert(
-        'Permission Denied',
-        'You need to give storage permission to download the file',
-      );
+      Alert.alert('Permission Denied', 'You need to give storage permission');
       return;
     }
+
     try {
-      const header = ` Customer , Orders , Products , Total \n`; // Center-aligned headers with spaces
+      // Prepare CSV
+      const header = `Customer,Orders,Products,Total\n`;
       const content = totalSales
-        .map(
+        ?.map(
           item =>
-            ` ${item.customer},${item.orders},${item.products},"${item.total}"\n`, // Center-aligned values with spaces
+            `${item.customer},${item.orders},${item.products},"${item.total}"\n`,
         )
         .join('');
 
       const fileContent = header + content;
-      const directoryPath = RNFetchBlob.fs.dirs.DownloadDir;
 
-      // Generate a timestamp to append to the filename
+      const downloads = RNBlobUtil.fs.dirs.DownloadDir;
       const timestamp = new Date().toISOString().replace(/[:.-]/g, '');
-      const filePath = `${directoryPath}/customer_reports_${timestamp}.csv`;
-      await RNFetchBlob.fs.writeFile(filePath, fileContent, 'utf8');
+      const filePath = `${downloads}/customer_reports_${timestamp}.csv`;
 
-      console.log('File saved:', filePath);
-      Alert.alert('Success', 'File downloaded successfully');
+      // ✅ Save directly
+      await RNBlobUtil.fs.writeFile(filePath, fileContent, 'utf8');
+      console.log('filePath', filePath);
+
+      Alert.alert('Success', `File saved at:\n${filePath}`);
     } catch (error) {
       console.error('Error saving file:', error);
+      Alert.alert('Error', 'Failed to save file');
     }
   };
 
@@ -280,37 +287,7 @@ const CustomerOrderReport = ({navigation, title}) => {
         backgroundColor="#F4F5F7"
         barStyle={theme.dark ? 'light-content' : 'dark-content'}
       />
-
-      <View
-        style={{
-          flexDirection: 'row',
-          paddingHorizontal: 14,
-          paddingVertical: 16,
-          backgroundColor: 'white',
-          elevation: 10,
-          shadowColor: '#040D1C14',
-          borderBottomWidth: 0.4,
-          borderBottomColor: '#21272E14',
-        }}>
-        <TouchableOpacity
-          activeOpacity={0.6}
-          onPress={() => navigation.goBack()}>
-          <Image
-            style={{width: 28, height: 28, resizeMode: 'center'}}
-            source={require('../../assets/back3x.png')}
-          />
-        </TouchableOpacity>
-        <View style={{marginLeft: 1, flexDirection: 'row'}}>
-          <Text
-            style={{
-              color: '#2B2520',
-              fontFamily: 'Poppins-Medium',
-              fontSize: 18,
-            }}>
-            Customer Orders Reports{' '}
-          </Text>
-        </View>
-      </View>
+      <Header title={'Customer Orders Reports'} />
 
       <View
         style={{
@@ -319,7 +296,24 @@ const CustomerOrderReport = ({navigation, title}) => {
           marginHorizontal: 30,
           justifyContent: 'space-between',
         }}>
-        <DatePicker
+        <TouchableOpacity
+          style={styles.dateBox}
+          onPress={() => setOpenStartDate(true)}>
+          <Text style={styles.dateText}>
+            {startDate ? moment(startDate).format('DD-MM-YYYY') : 'Start Date'}
+          </Text>
+          <Ionicons name="calendar-outline" size={20} color="#000" />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.dateBox}
+          onPress={() => setOpenEndDate(true)}>
+          <Text style={styles.dateText}>
+            {endDate ? moment(endDate).format('DD-MM-YYYY') : 'End Date'}
+          </Text>
+          <Ionicons name="calendar-outline" size={20} color="#000" />
+        </TouchableOpacity>
+        {/* <DatePicker
           style={styles.datePickerStyle}
           date={startDate}
           mode="date"
@@ -347,7 +341,7 @@ const CustomerOrderReport = ({navigation, title}) => {
           }}
           minDate={startDate ? moment(startDate).toDate() : new Date()}
           maxDate={new Date()}
-        />
+        /> */}
       </View>
 
       <View style={{flexDirection: 'row'}}>
@@ -526,12 +520,39 @@ const CustomerOrderReport = ({navigation, title}) => {
           Total
         </Text>
       </View>
+      <DatePicker
+        modal
+        open={openStartDate}
+        date={startDate || new Date()}
+        mode="date"
+        maximumDate={new Date()}
+        onConfirm={date => {
+          setOpenStartDate(false);
+          setStartDate(date);
+          setEndDate(null); // reset end date if start changes
+        }}
+        onCancel={() => setOpenStartDate(false)}
+      />
+
+      <DatePicker
+        modal
+        open={openEndDate}
+        date={endDate || new Date()}
+        mode="date"
+        minimumDate={endDate || undefined}
+        maximumDate={new Date()}
+        onConfirm={date => {
+          setOpenEndDate(false);
+          setEndDate(date);
+        }}
+        onCancel={() => setOpenEndDate(false)}
+      />
 
       <ScrollView>
         {initialLoading ? (
           <ActivityIndicator size="large" color="green" />
-        ) : totalSales.length === 0 ? (
-          <Text style={{textAlign: 'center', margin: 20}}>
+        ) : totalSales?.length === 0 ? (
+          <Text style={{textAlign: 'center', margin: 20, color: '#000'}}>
             No sales report to display
           </Text>
         ) : (
@@ -621,5 +642,23 @@ const styles = StyleSheet.create({
   },
   valueText: {
     marginLeft: 5,
+  },
+  dateBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 6,
+    flex: 1,
+    marginHorizontal: 5,
+    justifyContent: 'space-between',
+  },
+  dateText: {
+    fontFamily: 'Poppins-Medium',
+    fontSize: 12,
+    color: '#000',
   },
 });

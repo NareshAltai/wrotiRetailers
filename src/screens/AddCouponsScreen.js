@@ -9,9 +9,10 @@ import {
   StyleSheet,
   ScrollView,
   FlatList,
-  CheckBox,
+  // CheckBox,
   ActivityIndicator,
 } from 'react-native';
+import CheckBox from '@react-native-community/checkbox';
 import {useTheme} from '@react-navigation/native';
 import {Divider, Menu} from 'react-native-paper';
 import DatePicker from 'react-native-date-picker';
@@ -25,8 +26,8 @@ import moment from 'moment';
 const AddCouponsScreen = ({navigation, route}) => {
   const theme = useTheme();
   const {colors} = useTheme();
-  const [startDate, setStartDate] = useState();
-  const [endDate, setEndDate] = useState();
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
   const [customerLoginCode, setCustomerLoginCode] = React.useState();
   const [freeShippingCode, setFreeShippingCode] = React.useState();
   const [statusCode, setStatusCode] = React.useState();
@@ -55,6 +56,8 @@ const AddCouponsScreen = ({navigation, route}) => {
   const [description, setDescription] = React.useState();
   const [loader, setIsLoader] = React.useState(false);
   const [updateLoader, setUpdateLoader] = React.useState(false);
+  const [openStartDate, setOpenStartDate] = useState(false);
+  const [openEndDate, setOpenEndDate] = useState(false);
 
   const isCustomerLogin = [
     {id: '1', name: 'Yes'},
@@ -133,7 +136,7 @@ const AddCouponsScreen = ({navigation, route}) => {
 
   const loadCouponById = async () => {
     setIsLoader(true);
-    setCoupon_Id(route.params.couponObject.coupon_id);
+    setCoupon_Id(route.params?.couponObject?.coupon_id || '');
     const api = new DeveloperAPIClient();
     let Token = await AsyncStorage.getItem('token');
     let UserMobile = await AsyncStorage.getItem('MobileNumber');
@@ -157,8 +160,16 @@ const AddCouponsScreen = ({navigation, route}) => {
       if (allcoupondata?.data?.results?.logged == '1') {
         setFreeShippingCode('Yes');
       } else setFreeShippingCode('No');
-      setStartDate(allcoupondata.data.results.date_start);
-      setEndDate(allcoupondata.data.results.date_end);
+      setStartDate(
+        allcoupondata.data.results.date_start
+          ? new Date(allcoupondata.data.results.date_start)
+          : new Date(),
+      );
+      setEndDate(
+        allcoupondata.data.results.date_end
+          ? new Date(allcoupondata.data.results.date_end)
+          : new Date(),
+      );
       setUsesPerCoupon(allcoupondata.data.results.uses_total);
       setUsesPerCustomer(allcoupondata.data.results.uses_customer);
       if (allcoupondata.data.results.status == '1') {
@@ -367,7 +378,7 @@ const AddCouponsScreen = ({navigation, route}) => {
 
   useEffect(() => {
     setTimeout(async () => {
-      if (route != undefined && route.params.couponObject.isEdited == true) {
+      if (route != undefined && route.params?.couponObject?.isEdited == true) {
         setIsEdited(true);
       } else {
         setIsEdited(false);
@@ -750,7 +761,7 @@ const AddCouponsScreen = ({navigation, route}) => {
         </Text>
       </TouchableOpacity>
       <View style={{marginLeft: 'auto', marginTop: 2}}>
-        <CheckBox
+        {/* <CheckBox
           value={selectedItems.includes(item.id) ? true : false}
           onValueChange={() =>
             selectedItems.includes(item.id)
@@ -758,6 +769,17 @@ const AddCouponsScreen = ({navigation, route}) => {
               : onSelectedItemsChange(item)
           }
           style={styles.checkbox}
+        /> */}
+        <CheckBox
+          value={selectedItems.includes(val.category_id)}
+          onValueChange={newValue => {
+            if (newValue) {
+              onSelectedRemoveItemsChange(val);
+            } else {
+              onSelectedItemsChange(val);
+            }
+          }}
+          style={{marginTop: '4%'}}
         />
       </View>
     </View>
@@ -836,6 +858,7 @@ const AddCouponsScreen = ({navigation, route}) => {
           flexDirection: 'row',
           marginHorizontal: 5,
           marginVertical: 10,
+          marginTop: 25,
         }}>
         <TouchableOpacity
           activeOpacity={0.6}
@@ -876,59 +899,59 @@ const AddCouponsScreen = ({navigation, route}) => {
 
       <ScrollView>
         <View style={{marginTop: 10}}>
-          <Text style={{marginLeft: 12, fontFamily: 'Poppins-Medium'}}>
+          <Text
+            style={{
+              marginLeft: 12,
+              fontFamily: 'Poppins-Medium',
+              color: '#000',
+            }}>
             Coupon Name
           </Text>
         </View>
         <TextInput
-          style={{
-            height: 40,
-            margin: 12,
-            padding: 10,
-            backgroundColor: '#F7F7FC',
-            fontFamily: 'Poppins-Regular',
-          }}
+          style={styles.commonInput}
           onChangeText={val => setCouponName(val)}
           value={couponName}
           maxLength={20}
           placeholder="Please enter coupon name"
+          placeholderTextColor={'grey'}
         />
         <View style={{marginTop: 10}}>
-          <Text style={{marginLeft: 12, fontFamily: 'Poppins-Medium'}}>
+          <Text
+            style={{
+              marginLeft: 12,
+              fontFamily: 'Poppins-Medium',
+              color: '#000',
+            }}>
             Coupon Description
           </Text>
         </View>
         <TextInput
-          style={{
-            height: 40,
-            margin: 12,
-            padding: 10,
-            backgroundColor: '#F7F7FC',
-            fontFamily: 'Poppins-Regular',
-          }}
+          style={styles.commonInput}
           onChangeText={val => setDescription(val)}
           value={description}
           maxLength={50}
           placeholder="Please enter coupon description"
+          placeholderTextColor={'grey'}
         />
         <View style={{marginTop: 10}}>
-          <Text style={{marginLeft: 12, fontFamily: 'Poppins-Medium'}}>
+          <Text
+            style={{
+              marginLeft: 12,
+              fontFamily: 'Poppins-Medium',
+              color: '#000',
+            }}>
             Code
           </Text>
         </View>
         <TextInput
-          style={{
-            height: 40,
-            margin: 12,
-            padding: 10,
-            backgroundColor: '#F7F7FC',
-            fontFamily: 'Poppins-Regular',
-          }}
+          style={styles.commonInput}
           onChangeText={val => setCouponCode(val)}
           value={couponCode}
           placeholder="Please enter coupon code"
           maxLength={20}
           editable={!isEdited}
+          placeholderTextColor={'grey'}
         />
         <View style={{marginTop: 10}}>
           <Text style={{marginLeft: 12, fontFamily: 'Poppins-Medium'}}>
@@ -950,7 +973,7 @@ const AddCouponsScreen = ({navigation, route}) => {
                       item.name === percentageCode ? 'checked' : 'unchecked'
                     }
                   />
-                  <Text style={styles.reasonSection}>{item.name}</Text>
+                  <Text style={{color: '#000'}}>{item.name}</Text>
                 </View>
               </TouchableOpacity>
             )}
@@ -959,61 +982,61 @@ const AddCouponsScreen = ({navigation, route}) => {
         {percentageCode == 'Percentage' && (
           <View>
             <View style={{marginTop: 10}}>
-              <Text style={{marginLeft: 12, fontFamily: 'Poppins-Medium'}}>
+              <Text
+                style={{
+                  marginLeft: 12,
+                  fontFamily: 'Poppins-Medium',
+                  color: '#000',
+                }}>
                 Maximum Discount
               </Text>
             </View>
             <TextInput
-              style={{
-                height: 40,
-                margin: 12,
-                padding: 10,
-                backgroundColor: '#F7F7FC',
-                fontFamily: 'Poppins-Regular',
-              }}
+              style={styles.commonInput}
               onChangeText={val => onChangeMaxCouponCap(val)}
               value={maxCouponCap}
               placeholder="Please enter maximum value"
               keyboardType="numeric"
+              placeholderTextColor={'grey'}
             />
           </View>
         )}
 
         <View style={{marginTop: 10}}>
-          <Text style={{marginLeft: 12, fontFamily: 'Poppins-Medium'}}>
+          <Text
+            style={{
+              marginLeft: 12,
+              fontFamily: 'Poppins-Medium',
+              color: '#000',
+            }}>
             Discount
           </Text>
         </View>
         <TextInput
-          style={{
-            height: 40,
-            margin: 12,
-            padding: 10,
-            backgroundColor: '#F7F7FC',
-            fontFamily: 'Poppins-Regular',
-          }}
+          style={styles.commonInput}
           onChangeText={val => onChangeDiscount(val)}
           value={discount}
           placeholder="Please enter discount"
           keyboardType="numeric"
+          placeholderTextColor={'grey'}
         />
         <View style={{marginTop: 10}}>
-          <Text style={{marginLeft: 12, fontFamily: 'Poppins-Medium'}}>
+          <Text
+            style={{
+              marginLeft: 12,
+              fontFamily: 'Poppins-Medium',
+              color: '#000',
+            }}>
             Cart Total
           </Text>
         </View>
         <TextInput
-          style={{
-            height: 40,
-            margin: 12,
-            padding: 10,
-            backgroundColor: '#F7F7FC',
-            fontFamily: 'Poppins-Regular',
-          }}
+          style={styles.commonInput}
           onChangeText={val => onChangeTotal(val)}
           value={totalAmount}
           placeholder="Please enter cart total"
           keyboardType="numeric"
+          placeholderTextColor={'grey'}
         />
         <View style={{marginTop: 10}}>
           <Text style={{marginLeft: 12, fontFamily: 'Poppins-Medium'}}>
@@ -1035,7 +1058,7 @@ const AddCouponsScreen = ({navigation, route}) => {
                         item.name === freeShippingCode ? 'checked' : 'unchecked'
                       }
                     />
-                    <Text style={styles.reasonSection}>{item.name}</Text>
+                    <Text style={{color: '#000'}}>{item.name}</Text>
                   </View>
                 </TouchableOpacity>
               )}
@@ -1043,7 +1066,12 @@ const AddCouponsScreen = ({navigation, route}) => {
           </View>
         </View>
         <View style={{marginTop: 10}}>
-          <Text style={{marginLeft: 12, fontFamily: 'Poppins-Medium'}}>
+          <Text
+            style={{
+              marginLeft: 12,
+              fontFamily: 'Poppins-Medium',
+              color: '#000',
+            }}>
             Products
           </Text>
         </View>
@@ -1057,10 +1085,11 @@ const AddCouponsScreen = ({navigation, route}) => {
             alignSelf: 'center',
           }}>
           <TextInput
-            style={{width: '90%', paddingLeft: 10}}
+            style={{width: '90%', paddingLeft: 10, color: '#000'}}
             onChangeText={val => onSearchProduct(val)}
             value={productSearchKey}
             placeholder="Search for Products"
+            placeholderTextColor={'grey'}
           />
 
           <TouchableOpacity
@@ -1142,7 +1171,9 @@ const AddCouponsScreen = ({navigation, route}) => {
                 }}
                 activeOpacity={0.7}
                 onPress={() => setVisibleCats(!visibleCats)}>
-                <Text numberOfLines={1} style={{fontFamily: 'Poppins-Medium'}}>
+                <Text
+                  numberOfLines={1}
+                  style={{fontFamily: 'Poppins-Medium', color: '#000'}}>
                   Please select category
                 </Text>
                 <View>
@@ -1157,7 +1188,7 @@ const AddCouponsScreen = ({navigation, route}) => {
               cattype.map((val, i) => {
                 return (
                   <View style={{flexDirection: 'row'}}>
-                    <CheckBox
+                    {/* <CheckBox
                       value={
                         selectedCategories.includes(val.category_id)
                           ? true
@@ -1169,11 +1200,23 @@ const AddCouponsScreen = ({navigation, route}) => {
                           : onSelectedCategories(val)
                       }
                       style={{marginTop: '4%'}}
+                    /> */}
+                    <CheckBox
+                      value={selectedCategories.includes(val.category_id)}
+                      onValueChange={newValue => {
+                        if (newValue) {
+                          onSelectedCategories(val);
+                        } else {
+                          onSelectedRemoveCategories(val);
+                        }
+                      }}
+                      style={{marginTop: '4%'}}
                     />
                     <Menu.Item
                       key={i}
                       title={decode(val.name)}
                       onPress={() => updatecat(val)}
+                      titleStyle={{color: '#000'}} // ✅ text color here
                     />
                   </View>
                 );
@@ -1202,93 +1245,213 @@ const AddCouponsScreen = ({navigation, route}) => {
         ) : (
           <></>
         )}
-        <View style={{marginTop: 10, flexDirection: 'row'}}>
-          <Text
-            style={{
-              marginLeft: 12,
-              fontFamily: 'Poppins-Medium',
-              marginTop: '3%',
-            }}>
-            Start Date:
-          </Text>
-          <DatePicker
-            style={styles.datePickerStyle}
-            date={startDate}
-            mode="date"
-            placeholder="Select Date"
-            format="YYYY-MM-DD"
-            confirmBtnText="Confirm"
-            cancelBtnText="Cancel"
-            onDateChange={val => {
-              setStartDate(val);
-            }}
-            minDate={moment().toDate()}
-          />
+        {/* <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            paddingRight: 15,
+          }}>
+          <View
+            style={{marginTop: 10, flexDirection: 'row', alignItems: 'center'}}>
+            <Text
+              style={{
+                marginLeft: 12,
+                fontFamily: 'Poppins-Medium',
+                marginTop: '3%',
+                color: '#000',
+              }}>
+              Start Date:
+            </Text>
+
+            <TouchableOpacity onPress={() => setOpenStartDate(true)}>
+              <Image source={require('../assets/calendar.png')} />
+            </TouchableOpacity>
+            <DatePicker
+              modal
+              open={openStartDate}
+              date={endDate}
+              mode="date"
+              minimumDate={moment().toDate()}
+              onConfirm={val => {
+                setOpenStartDate(false);
+                setEndDate(val);
+              }}
+              onCancel={() => {
+                setOpenStartDate(false);
+              }}
+            />
+          </View>
+
+          <View
+            style={{marginTop: 30, flexDirection: 'row', alignItems: 'center'}}>
+            <Text
+              style={{
+                marginLeft: 12,
+                fontFamily: 'Poppins-Medium',
+                marginTop: '3%',
+                color: '#000',
+              }}>
+              End Date:
+            </Text>
+            <TouchableOpacity onPress={() => setOpenEndDate(true)}>
+              <Image source={require('../assets/calendar.png')} />
+            </TouchableOpacity>
+            <DatePicker
+              modal
+              open={openEndDate}
+              date={endDate}
+              mode="date"
+              minimumDate={moment().toDate()}
+              onConfirm={val => {
+                setOpenEndDate(false);
+                setEndDate(val);
+              }}
+              onCancel={() => {
+                setOpenEndDate(false);
+              }}
+            />
+          </View>
+        </View> */}
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            paddingRight: 15,
+          }}>
+          {/* Start Date */}
+          <View
+            style={{marginTop: 10, flexDirection: 'row', alignItems: 'center'}}>
+            <View>
+              <Text
+                style={{
+                  marginLeft: 12,
+                  fontFamily: 'Poppins-Medium',
+                  marginTop: '3%',
+                  color: '#000',
+                }}>
+                Start Date:
+              </Text>
+
+              {/* Show selected start date */}
+              <Text
+                style={{
+                  marginLeft: 8,
+                  fontFamily: 'Poppins-Regular',
+                  color: '#333',
+                }}>
+                {startDate ? moment(startDate).format('DD-MMM-YYYY') : '--'}
+              </Text>
+            </View>
+
+            <TouchableOpacity
+              onPress={() => setOpenStartDate(true)}
+              style={{marginLeft: 8}}>
+              <Image source={require('../assets/calendar.png')} />
+            </TouchableOpacity>
+
+            <DatePicker
+              modal
+              open={openStartDate}
+              date={startDate || new Date()}
+              mode="date"
+              minimumDate={moment().toDate()}
+              onConfirm={val => {
+                setOpenStartDate(false);
+                setStartDate(val);
+              }}
+              onCancel={() => {
+                setOpenStartDate(false);
+              }}
+            />
+          </View>
+
+          {/* End Date */}
+          <View
+            style={{marginTop: 30, flexDirection: 'row', alignItems: 'center'}}>
+            <View>
+              <Text
+                style={{
+                  marginLeft: 12,
+                  fontFamily: 'Poppins-Medium',
+                  marginTop: '3%',
+                  color: '#000',
+                }}>
+                End Date:
+              </Text>
+
+              {/* Show selected end date */}
+              <Text
+                style={{
+                  marginLeft: 8,
+                  fontFamily: 'Poppins-Regular',
+                  color: '#333',
+                }}>
+                {endDate ? moment(endDate).format('DD-MMM-YYYY') : '--'}
+              </Text>
+            </View>
+
+            <TouchableOpacity
+              onPress={() => setOpenEndDate(true)}
+              style={{marginLeft: 8}}>
+              <Image source={require('../assets/calendar.png')} />
+            </TouchableOpacity>
+
+            <DatePicker
+              modal
+              open={openEndDate}
+              date={endDate || new Date()}
+              mode="date"
+              minimumDate={moment().toDate()}
+              onConfirm={val => {
+                setOpenEndDate(false);
+                setEndDate(val);
+              }}
+              onCancel={() => {
+                setOpenEndDate(false);
+              }}
+            />
+          </View>
         </View>
 
-        <View style={{marginTop: 30, flexDirection: 'row'}}>
+        <View style={{marginTop: 10}}>
           <Text
             style={{
               marginLeft: 12,
               fontFamily: 'Poppins-Medium',
-              marginTop: '3%',
+              color: '#000',
             }}>
-            End Date:
-          </Text>
-          <DatePicker
-            style={{
-              width: 200,
-              marginLeft: '7%',
-            }}
-            date={endDate}
-            mode="date"
-            placeholder="Select Date"
-            format="YYYY-MM-DD"
-            confirmBtnText="Confirm"
-            cancelBtnText="Cancel"
-            onDateChange={val => {
-              setEndDate(val);
-            }}
-            minDate={moment().toDate()}
-          />
-        </View>
-        <View style={{marginTop: 10}}>
-          <Text style={{marginLeft: 12, fontFamily: 'Poppins-Medium'}}>
             Uses Per Coupon
           </Text>
         </View>
         <TextInput
-          style={{
-            height: 40,
-            margin: 12,
-            padding: 10,
-            backgroundColor: '#F7F7FC',
-            fontFamily: 'Poppins-Regular',
-          }}
+          style={styles.commonInput}
           onChangeText={val => onChangeUsesPerCoupon(val)}
           value={usesPerCoupon}
           placeholder="Please enter uses per coupon"
           keyboardType="numeric"
           maxLength={4}
+          placeholderTextColor={'grey'}
         />
         <View style={{marginTop: 10}}>
-          <Text style={{marginLeft: 12, fontFamily: 'Poppins-Medium'}}>
+          <Text
+            style={{
+              marginLeft: 12,
+              fontFamily: 'Poppins-Medium',
+              color: '#000',
+            }}>
             Uses Per Customer
           </Text>
         </View>
         <TextInput
-          style={{
-            height: 40,
-            margin: 12,
-            padding: 10,
-            backgroundColor: '#F7F7FC',
-            fontFamily: 'Poppins-Regular',
-          }}
+          style={styles.commonInput}
           onChangeText={val => onChangeUsesPerCustomer(val)}
           value={usesPerCustomer}
           maxLength={3}
           placeholder="Please enter uses per customer"
           keyboardType="numeric"
+          placeholderTextColor={'grey'}
         />
         <View style={{marginTop: 10}}>
           <Text
@@ -1313,7 +1476,7 @@ const AddCouponsScreen = ({navigation, route}) => {
                     uncheckedColor="#2ea048"
                     status={item.name === statusCode ? 'checked' : 'unchecked'}
                   />
-                  <Text style={styles.reasonSection}>{item.name}</Text>
+                  <Text style={{color: '#000'}}>{item.name}</Text>
                 </View>
               </TouchableOpacity>
             )}
@@ -1428,5 +1591,13 @@ const styles = StyleSheet.create({
   },
   checkbox: {
     marginTop: '7%',
+  },
+  commonInput: {
+    height: 40,
+    margin: 12,
+    padding: 10,
+    backgroundColor: '#F7F7FC',
+    fontFamily: 'Poppins-Regular',
+    color: '#000',
   },
 });

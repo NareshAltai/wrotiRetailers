@@ -14,6 +14,7 @@ import {
   Button,
   ActivityIndicator,
   PermissionsAndroid,
+  Platform,
 } from 'react-native';
 import {useTheme} from '@react-navigation/native';
 import {
@@ -32,6 +33,8 @@ import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
 import RNFetchBlob from 'react-native-blob-util';
 import Header from '../../components/Header';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import RNBlobUtil from 'react-native-blob-util';
 
 const ProductsReport = ({navigation, title}) => {
   const theme = useTheme();
@@ -42,6 +45,8 @@ const ProductsReport = ({navigation, title}) => {
   const [visible, setVisible] = React.useState(false);
   const [selectedItem, setSelectedItem] = React.useState('day');
   // const options = ['day', 'week', 'month', 'year'];
+  const [openStartDate, setOpenStartDate] = useState(false);
+  const [openEndDate, setOpenEndDate] = useState(false);
 
   const [visibleOrderType, setVisibleOrderType] = React.useState(false);
   const [selectedOrdertype, setSelectedOrderType] = React.useState(null);
@@ -167,13 +172,14 @@ const ProductsReport = ({navigation, title}) => {
   };
 
   const requestStoragePermission = async () => {
-    if (Platform.OS === 'android') {
+    if (Platform.OS === 'android' && Platform.Version < 33) {
       try {
         const granted = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
           {
             title: 'Storage Permission Required',
             message: 'App needs access to your storage to download the file',
+            buttonPositive: 'OK',
           },
         );
         return granted === PermissionsAndroid.RESULTS.GRANTED;
@@ -182,37 +188,35 @@ const ProductsReport = ({navigation, title}) => {
         return false;
       }
     }
-    return true;
+    return true; // On Android 13+ or iOS, no permission needed
   };
 
-  const downloadContent = async () => {
+  const downloadContent = async (totalSales: any[]) => {
     const hasPermission = await requestStoragePermission();
     if (!hasPermission) {
-      Alert.alert(
-        'Permission Denied',
-        'You need to give storage permission to download the file',
-      );
+      Alert.alert('Permission Denied', 'You need to give storage permission');
       return;
     }
+
     try {
       const header = ` Product name , Quantity , Total\n`;
       const content = totalSales
         .map(item => `${item.name},${item.quantity},"${item.total}"\n`)
         .join('');
+
       const fileContent = header + content;
-      const directoryPath = RNFetchBlob.fs.dirs.DownloadDir;
+
+      const downloads = RNBlobUtil.fs.dirs.DownloadDir;
       const timestamp = new Date().toISOString().replace(/[:.-]/g, '');
-      const filePath = `${directoryPath}/product_reports_${timestamp}.csv`;
+      const filePath = `${downloads}/customer_reports_${timestamp}.csv`;
 
-      // Write the content to a file
-      await RNFetchBlob.fs.writeFile(filePath, fileContent, 'utf8');
+      await RNBlobUtil.fs.writeFile(filePath, fileContent, 'utf8');
+      console.log('filePath', filePath);
 
-      console.log('File saved:', filePath);
-
-      // Show success message
-      Alert.alert('Success', 'File downloaded successfully');
+      Alert.alert('Success', `File saved at:\n${filePath}`);
     } catch (error) {
       console.error('Error saving file:', error);
+      Alert.alert('Error', 'Failed to save file');
     }
   };
 
@@ -276,35 +280,23 @@ const ProductsReport = ({navigation, title}) => {
           marginHorizontal: 30,
           justifyContent: 'space-between',
         }}>
-        <DatePicker
-          style={styles.datePickerStyle}
-          date={startDate}
-          mode="date"
-          placeholder="Start Date"
-          format="YYYY-MM-DD"
-          confirmBtnText="Confirm"
-          cancelBtnText="Cancel"
-          onDateChange={val => {
-            setStartDate(val);
-            setEndDate(null);
-          }}
-          maxDate={new Date()}
-        />
+        <TouchableOpacity
+          style={styles.dateBox}
+          onPress={() => setOpenStartDate(true)}>
+          <Text style={styles.dateText}>
+            {startDate ? moment(startDate).format('DD-MM-YYYY') : 'Start Date'}
+          </Text>
+          <Ionicons name="calendar-outline" size={20} color="#000" />
+        </TouchableOpacity>
 
-        <DatePicker
-          style={styles.datePickerStyle}
-          date={endDate}
-          mode="date"
-          placeholder="End Date"
-          format="YYYY-MM-DD"
-          confirmBtnText="Confirm"
-          cancelBtnText="Cancel"
-          onDateChange={val => {
-            setEndDate(val);
-          }}
-          minDate={startDate ? moment(startDate).toDate() : new Date()}
-          maxDate={new Date()}
-        />
+        <TouchableOpacity
+          style={styles.dateBox}
+          onPress={() => setOpenEndDate(true)}>
+          <Text style={styles.dateText}>
+            {endDate ? moment(endDate).format('DD-MM-YYYY') : 'End Date'}
+          </Text>
+          <Ionicons name="calendar-outline" size={20} color="#000" />
+        </TouchableOpacity>
       </View>
 
       <View style={{flexDirection: 'row'}}>
@@ -477,7 +469,7 @@ const ProductsReport = ({navigation, title}) => {
         {initialLoading ? (
           <ActivityIndicator size="large" color="green" />
         ) : totalSales.length === 0 ? (
-          <Text style={{textAlign: 'center', margin: 20}}>
+          <Text style={{textAlign: 'center', margin: 20, color: '#000'}}>
             No sales report to display
           </Text>
         ) : (
@@ -496,6 +488,33 @@ const ProductsReport = ({navigation, title}) => {
         )}
       </ScrollView>
       {/* </View> */}
+      <DatePicker
+        modal
+        open={openStartDate}
+        date={startDate || new Date()}
+        mode="date"
+        maximumDate={new Date()}
+        onConfirm={date => {
+          setOpenStartDate(false);
+          setStartDate(date);
+          setEndDate(null); // reset end date if start changes
+        }}
+        onCancel={() => setOpenStartDate(false)}
+      />
+
+      <DatePicker
+        modal
+        open={openEndDate}
+        date={endDate || new Date()}
+        mode="date"
+        minimumDate={endDate || undefined}
+        maximumDate={new Date()}
+        onConfirm={date => {
+          setOpenEndDate(false);
+          setEndDate(date);
+        }}
+        onCancel={() => setOpenEndDate(false)}
+      />
 
       {/* download report button */}
       {totalSales != 0 && (
@@ -567,5 +586,23 @@ const styles = StyleSheet.create({
   },
   valueText: {
     marginLeft: 5,
+  },
+  dateBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 6,
+    flex: 1,
+    marginHorizontal: 5,
+    justifyContent: 'space-between',
+  },
+  dateText: {
+    fontFamily: 'Poppins-Medium',
+    fontSize: 12,
+    color: '#000',
   },
 });

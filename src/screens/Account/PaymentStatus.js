@@ -21,6 +21,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from 'moment';
 import ApiClient from '../../state/middlewares/DeveloperAPIClient';
 import Toast from 'react-native-simple-toast';
+import Header from '../../components/Header';
 
 const PaymentStatusScreen = ({navigation}) => {
   const [searchBy, setSearchBy] = React.useState('Mobile');
@@ -787,33 +788,7 @@ const PaymentStatusScreen = ({navigation}) => {
         </Modal>
 
         <View style={styles.container}>
-          <View
-            style={{
-              flexDirection: 'row',
-              marginHorizontal: 5,
-              marginVertical: 15,
-            }}>
-            <TouchableOpacity
-              activeOpacity={0.6}
-              onPress={() => navigation.goBack()}>
-              <Image
-                style={{width: 28, height: 28, resizeMode: 'center'}}
-                source={require('../../assets/back3x.png')}
-              />
-            </TouchableOpacity>
-            <View style={{marginLeft: 5}}>
-              <Text
-                style={{
-                  color: '#0F0F0F',
-                  fontFamily: 'Poppins-Bold',
-                  fontSize: 16,
-                  marginTop: 2,
-                }}>
-                Payment Status
-              </Text>
-            </View>
-          </View>
-          <Divider />
+          <Header title={'Payment Status'} />
           <View style={{flexDirection: 'row'}}>
             <Text
               style={{

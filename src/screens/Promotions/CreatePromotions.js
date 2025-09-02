@@ -28,6 +28,7 @@ import DeveloperAPIClient from '../../state/middlewares/DeveloperAPIClient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-simple-toast';
 import moment from 'moment';
+import Header from '../../components/Header';
 
 const CreatePromotion = ({navigation}) => {
   const theme = useTheme();
@@ -260,6 +261,8 @@ const CreatePromotion = ({navigation}) => {
   // date picker for start and end date
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
+  const [openStartDate, setOpenStartDate] = useState(false);
+  const [openEndDate, setOpenEndDate] = useState(false);
 
   const handleStartDateChange = newDate => {
     setStartDate(newDate);
@@ -518,33 +521,7 @@ const CreatePromotion = ({navigation}) => {
         backgroundColor="#F4F5F7"
         barStyle={theme.dark ? 'light-content' : 'dark-content'}
       />
-      <View
-        style={{
-          flexDirection: 'row',
-          marginHorizontal: 5,
-          marginVertical: 15,
-        }}>
-        <TouchableOpacity
-          activeOpacity={0.6}
-          onPress={() => navigation.goBack()}>
-          <Image
-            style={{width: 28, height: 28, resizeMode: 'center'}}
-            source={require('../../assets/back3x.png')}
-          />
-        </TouchableOpacity>
-        <View style={{marginLeft: 1}}>
-          <Text
-            style={{
-              color: '#2B2520',
-              fontFamily: 'Poppins-Medium',
-              fontSize: 20,
-            }}>
-            Create Promotion{' '}
-          </Text>
-        </View>
-        <View style={{marginLeft: '45%'}} />
-      </View>
-      <Divider />
+      <Header title={'Create Promotion'} />
       <ScrollView style={{marginBottom: 10}}>
         <View style={{marginTop: 10}}>
           <Text
@@ -719,7 +696,7 @@ const CreatePromotion = ({navigation}) => {
                         value={searchkey}
                         placeholderTextColor={'#555555'}
                         placeholder="Type product name"
-                        style={{width: 250}}
+                        style={{width: 250, color: '#000'}}
                       />
 
                       <View
@@ -1063,7 +1040,7 @@ const CreatePromotion = ({navigation}) => {
                             value={searchkey}
                             placeholderTextColor={'#555555'}
                             placeholder="Type product name"
-                            style={{width: 250}}
+                            style={{width: 250, color: '#000'}}
                           />
 
                           <View
@@ -1163,6 +1140,7 @@ const CreatePromotion = ({navigation}) => {
                               borderRadius: 5,
                               fontSize: 12,
                               textAlign: 'center',
+                              color: '#000',
                             }}
                             onChangeText={val => setTheyGet(val)}
                             value={theyGet}
@@ -1300,7 +1278,7 @@ const CreatePromotion = ({navigation}) => {
                         value={searchkey}
                         placeholderTextColor={'#555555'}
                         placeholder="Type product name"
-                        style={{width: 250}}
+                        style={{width: 250, color: '#000'}}
                       />
 
                       <View
@@ -1402,6 +1380,7 @@ const CreatePromotion = ({navigation}) => {
                           borderColor: '#555555',
                           borderRadius: 5,
                           fontSize: 12,
+                          color: '#000',
                         }}
                         onChangeText={val => setTheyGet(val)}
                         value={theyGet}
@@ -1440,7 +1419,7 @@ const CreatePromotion = ({navigation}) => {
                         value={searchkey}
                         placeholderTextColor={'#555555'}
                         placeholder="Type product name"
-                        style={{width: 250}}
+                        style={{width: 250, color: '#000'}}
                       />
 
                       <View
@@ -1631,7 +1610,7 @@ const CreatePromotion = ({navigation}) => {
                         value={searchkey}
                         placeholderTextColor={'#555555'}
                         placeholder="Type product name"
-                        style={{width: 250}}
+                        style={{width: 250, color: '#000'}}
                       />
 
                       <View
@@ -1733,6 +1712,7 @@ const CreatePromotion = ({navigation}) => {
                           borderColor: '#555555',
                           borderRadius: 5,
                           fontSize: 12,
+                          color: '#000',
                         }}
                         onChangeText={val => setTheyGet(val)}
                         value={theyGet}
@@ -1771,7 +1751,7 @@ const CreatePromotion = ({navigation}) => {
                         value={searchkey}
                         placeholderTextColor={'#555555'}
                         placeholder="Type product name"
-                        style={{width: 250}}
+                        style={{width: 250, color: '#000'}}
                       />
 
                       <View
@@ -1868,6 +1848,7 @@ const CreatePromotion = ({navigation}) => {
                           borderColor: '#555555',
                           borderRadius: 5,
                           fontSize: 12,
+                          color: '#000',
                         }}
                         onChangeText={val => setOffPerUnit(val)}
                         value={offPerUnit}
@@ -2045,7 +2026,7 @@ const CreatePromotion = ({navigation}) => {
                         value={searchkey}
                         placeholderTextColor={'#555555'}
                         placeholder="Type product name"
-                        style={{width: 250}}
+                        style={{width: 250, color: '#000'}}
                       />
 
                       <View
@@ -2142,6 +2123,7 @@ const CreatePromotion = ({navigation}) => {
                           borderColor: '#555555',
                           borderRadius: 5,
                           fontSize: 12,
+                          color: '#000',
                         }}
                         placeholderTextColor={'#555555'}
                         keyboardType="numeric"
@@ -2286,6 +2268,7 @@ const CreatePromotion = ({navigation}) => {
                           borderRadius: 5,
                           fontSize: 12,
                           textAlign: 'center',
+                          color: '#000',
                         }}
                         onChangeText={val => setGetOff(val)}
                         value={getOff}
@@ -2574,6 +2557,7 @@ const CreatePromotion = ({navigation}) => {
                           borderColor: '#555555',
                           borderRadius: 5,
                           fontSize: 12,
+                          color: '#000',
                         }}
                         onChangeText={val => setTheyGet(val)}
                         value={theyGet}
@@ -2772,6 +2756,7 @@ const CreatePromotion = ({navigation}) => {
                           borderColor: '#555555',
                           borderRadius: 5,
                           fontSize: 12,
+                          color: '#000',
                         }}
                         onChangeText={val => setTheyGet(val)}
                         value={theyGet}
@@ -3149,6 +3134,7 @@ const CreatePromotion = ({navigation}) => {
                               marginRight: 10,
                               borderWidth: 1,
                               padding: 5,
+                              color: '#000',
                             }}
                             placeholder=""
                             value={discount.minQty}
@@ -3172,6 +3158,7 @@ const CreatePromotion = ({navigation}) => {
                               marginRight: 10,
                               borderWidth: 1,
                               padding: 5,
+                              color: '#000',
                             }}
                             value={discount.discount}
                             onChangeText={value =>
@@ -3415,6 +3402,7 @@ const CreatePromotion = ({navigation}) => {
                               marginRight: 10,
                               borderWidth: 1,
                               padding: 5,
+                              color: '#000',
                             }}
                             placeholder=""
                             value={orderValue.minOrderValue}
@@ -3442,6 +3430,7 @@ const CreatePromotion = ({navigation}) => {
                               marginRight: 10,
                               borderWidth: 1,
                               padding: 5,
+                              color: '#000',
                             }}
                             value={orderValue.discountValue}
                             onChangeText={value =>
@@ -3518,6 +3507,7 @@ const CreatePromotion = ({navigation}) => {
                           borderColor: '#555555',
                           borderRadius: 5,
                           fontSize: 12,
+                          color: '#000',
                         }}
                         placeholderTextColor={'#555555'}
                         keyboardType="numeric"
@@ -3553,7 +3543,7 @@ const CreatePromotion = ({navigation}) => {
                         value={searchkey}
                         placeholderTextColor={'#555555'}
                         placeholder="Type product name"
-                        style={{width: 250}}
+                        style={{width: 250, color: '#000'}}
                       />
 
                       <View
@@ -3650,6 +3640,7 @@ const CreatePromotion = ({navigation}) => {
                           borderColor: '#555555',
                           borderRadius: 5,
                           fontSize: 12,
+                          color: '#000',
                         }}
                         placeholderTextColor={'#555555'}
                         keyboardType="numeric"
@@ -3782,6 +3773,7 @@ const CreatePromotion = ({navigation}) => {
                           borderColor: '#555555',
                           borderRadius: 5,
                           fontSize: 12,
+                          color: '#000',
                         }}
                         placeholderTextColor={'#555555'}
                         keyboardType="numeric"
@@ -3815,6 +3807,7 @@ const CreatePromotion = ({navigation}) => {
                           borderColor: '#555555',
                           borderRadius: 5,
                           fontSize: 12,
+                          color: '#000',
                         }}
                         placeholderTextColor={'#555555'}
                         keyboardType="numeric"
@@ -3841,6 +3834,7 @@ const CreatePromotion = ({navigation}) => {
                           borderColor: '#555555',
                           borderRadius: 5,
                           fontSize: 12,
+                          color: '#000',
                         }}
                         placeholderTextColor={'#555555'}
                         keyboardType="numeric"
@@ -4011,6 +4005,7 @@ const CreatePromotion = ({navigation}) => {
                           borderColor: '#555555',
                           borderRadius: 5,
                           fontSize: 12,
+                          color: '#000',
                         }}
                         placeholderTextColor={'#555555'}
                         keyboardType="numeric"
@@ -4051,6 +4046,7 @@ const CreatePromotion = ({navigation}) => {
                           borderColor: '#555555',
                           borderRadius: 5,
                           fontSize: 12,
+                          color: '#000',
                         }}
                         placeholderTextColor={'#555555'}
                         keyboardType="numeric"
@@ -4080,6 +4076,7 @@ const CreatePromotion = ({navigation}) => {
                           borderColor: '#555555',
                           borderRadius: 5,
                           fontSize: 12,
+                          color: '#000',
                         }}
                         placeholderTextColor={'#555555'}
                         keyboardType="numeric"
@@ -4133,6 +4130,7 @@ const CreatePromotion = ({navigation}) => {
                           borderColor: '#555555',
                           borderRadius: 5,
                           fontSize: 12,
+                          color: '#000',
                         }}
                         placeholderTextColor={'#555555'}
                         keyboardType="numeric"
@@ -4171,6 +4169,7 @@ const CreatePromotion = ({navigation}) => {
                           borderColor: '#555555',
                           borderRadius: 5,
                           fontSize: 12,
+                          color: '#000',
                         }}
                         placeholderTextColor={'#555555'}
                         keyboardType="numeric"
@@ -4199,6 +4198,7 @@ const CreatePromotion = ({navigation}) => {
                           borderColor: '#555555',
                           borderRadius: 5,
                           fontSize: 12,
+                          color: '#000',
                         }}
                         placeholderTextColor={'#555555'}
                         keyboardType="numeric"
@@ -4280,6 +4280,7 @@ const CreatePromotion = ({navigation}) => {
                       borderColor: '#555555',
                       borderRadius: 5,
                       fontSize: 12,
+                      color: '#000',
                     }}
                     onChangeText={val => setUnitPerUsed(val)}
                     value={unitPerUsed}
@@ -4300,6 +4301,7 @@ const CreatePromotion = ({navigation}) => {
                       borderColor: '#555555',
                       borderRadius: 5,
                       fontSize: 12,
+                      color: '#000',
                     }}
                     onChangeText={val => setApplyCoupon(val)}
                     value={applyCoupon}
@@ -4492,7 +4494,7 @@ const CreatePromotion = ({navigation}) => {
                     value={customerSearchKey}
                     placeholderTextColor={'#555555'}
                     placeholder="Type customer name"
-                    style={{width: 250}}
+                    style={{width: 250, color: '#000'}}
                   />
 
                   <View
@@ -4583,55 +4585,57 @@ const CreatePromotion = ({navigation}) => {
             marginTop: 10,
             justifyContent: 'space-between',
           }}>
-          <DatePicker
-            style={{width: 140}}
-            date={startDate}
-            mode="date"
-            placeholder="Select date"
-            format="YYYY-MM-DD"
-            minDate={minSelectableDate}
-            maxDate="2025-12-31"
-            confirmBtnText="Confirm"
-            cancelBtnText="Cancel"
-            customStyles={{
-              dateIcon: {
-                position: 'absolute',
-                left: 0,
-                top: 4,
-                marginLeft: 0,
-              },
-              dateInput: {
-                marginLeft: 36,
-              },
-              // ...other custom styles
+          <TouchableOpacity
+            style={{
+              borderWidth: 1,
+              borderColor: '#ccc',
+              borderRadius: 6,
+              paddingVertical: 8,
+              paddingHorizontal: 10,
+              width: 150,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
             }}
-            onDateChange={handleStartDateChange}
-          />
-
-          <DatePicker
-            style={{width: 140}}
-            date={endDate}
-            mode="date"
-            placeholder="Select date"
-            format="YYYY-MM-DD"
-            minDate={startDate ? startDate : minSelectableDate}
-            maxDate="2025-12-31"
-            confirmBtnText="Confirm"
-            cancelBtnText="Cancel"
-            customStyles={{
-              dateIcon: {
-                position: 'absolute',
-                left: 0,
-                top: 4,
-                marginLeft: 0,
-              },
-              dateInput: {
-                marginLeft: 36,
-              },
-              // ...other custom styles
+            onPress={() => setOpenStartDate(true)}>
+            <Text style={{fontSize: 12, color: '#000'}}>
+              {startDate
+                ? moment(startDate).format('YYYY-MM-DD')
+                : 'Start Date'}
+            </Text>
+            <Image
+              source={require('../../assets/calendar.png')}
+              style={{height: 18, width: 18, marginLeft: 6}}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              borderWidth: 1,
+              borderColor: '#ccc',
+              borderRadius: 6,
+              paddingVertical: 8,
+              paddingHorizontal: 10,
+              width: 150,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
             }}
-            onDateChange={handleEndDateChange}
-          />
+            onPress={() => setOpenEndDate(true)}
+            disabled={!startDate} // disable until start is selected
+          >
+            <Text style={{fontSize: 12, color: startDate ? '#000' : '#999'}}>
+              {endDate ? moment(endDate).format('YYYY-MM-DD') : 'End Date'}
+            </Text>
+            <Image
+              source={require('../../assets/calendar.png')}
+              style={{
+                height: 18,
+                width: 18,
+                marginLeft: 6,
+                tintColor: startDate ? '#000' : '#999',
+              }}
+            />
+          </TouchableOpacity>
 
           <TouchableOpacity onPress={() => removeDates()}>
             <Image
@@ -4905,6 +4909,32 @@ const CreatePromotion = ({navigation}) => {
           </TouchableOpacity>
         </View>
       </ScrollView>
+      <DatePicker
+        modal
+        mode="date"
+        open={openStartDate}
+        date={startDate || new Date()}
+        maximumDate={new Date('2025-12-31')}
+        onConfirm={date => {
+          setOpenStartDate(false);
+          setStartDate(date);
+          setEndDate(null); // reset end date when start changes
+        }}
+        onCancel={() => setOpenStartDate(false)}
+      />
+      <DatePicker
+        modal
+        mode="date"
+        open={openEndDate}
+        date={endDate || (startDate ? startDate : new Date())}
+        minimumDate={startDate || new Date()}
+        maximumDate={new Date('2025-12-31')}
+        onConfirm={date => {
+          setOpenEndDate(false);
+          setEndDate(date);
+        }}
+        onCancel={() => setOpenEndDate(false)}
+      />
 
       <TouchableOpacity
         style={{

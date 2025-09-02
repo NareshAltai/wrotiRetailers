@@ -66,9 +66,9 @@ const SearchScreen = ({navigation, route}) => {
       limit,
       offset,
     );
-    console.log(JSON.stringify(allsearchdata.data.products), '===>');
-    setsearchresults(allsearchdata.data.products);
-    if (allsearchdata.data.success === false) {
+    // console.log(JSON.stringify(allsearchdata.data.products), '===>');
+    setsearchresults(allsearchdata?.data?.products || []);
+    if (allsearchdata?.data?.success === false) {
       setEmptySearchResults(true);
       //Toast.showWithGravity("No Products Found", Toast.LONG, Toast.BOTTOM);
     }
@@ -279,8 +279,9 @@ const SearchScreen = ({navigation, route}) => {
               borderRadius: 5,
               flexDirection: 'row',
               height: 50,
-              marginVertical: 10,
+              // marginVertical: 10,
               marginHorizontal: 10,
+              marginTop: 30,
             }}>
             <TouchableOpacity
               activeOpacity={0.6}
@@ -308,6 +309,7 @@ const SearchScreen = ({navigation, route}) => {
                   fontFamily: 'Poppins-Regular',
                   fontSize: 12,
                   width: 200,
+                  color: '#000',
                 }}
                 placeholder="Search for Products and more"
                 underlineColorAndroid="transparent"

@@ -131,13 +131,15 @@ const App = ({pathUpdate, productImage}) => {
           marginTop: 18,
           width: '40%',
           height: 38,
-          paddingTop: 8,
-          paddingBottom: 15,
+          // paddingTop: 8,
+          paddingBottom: 3,
           backgroundColor: '#51AF5E',
           borderRadius: 10,
           borderWidth: 1,
           borderColor: '#fff',
           marginLeft: '30%',
+          alignItems: 'center',
+          justifyContent: 'center',
         }}
         onPress={handleChoosePhoto}>
         <Text
