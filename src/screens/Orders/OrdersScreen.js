@@ -30,6 +30,7 @@ import {useIsFocused} from '@react-navigation/native';
 import {newbox3x, processing3x, scooter3x} from '../../assets';
 import DeviceInfo from 'react-native-device-info';
 import messaging from '@react-native-firebase/messaging';
+import {hp} from '../../utils/scale';
 // import Toast from '../../components/Toast';
 
 const OrdersScreen = ({navigation, route}) => {
@@ -119,7 +120,7 @@ const OrdersScreen = ({navigation, route}) => {
       'New\r\nOrders':
         storeType === 'nexus'
           ? {
-              order_status_id: [20],
+              order_status_id: 20,
               image: newbox3x,
               count: paymentReceivedCount ? paymentReceivedCount : 0,
             }
@@ -129,29 +130,25 @@ const OrdersScreen = ({navigation, route}) => {
               count: newDefaultOrderCount ? newDefaultOrderCount : 0,
             },
       'Processing\r\nOrders': {
-        order_status_id: [2],
+        order_status_id: 2,
         image: processing3x,
         count: processingOrdersCount,
       },
       'Out for\r\nDelivery': {
-        order_status_id: [15],
+        order_status_id: 15,
         image: scooter3x,
         count: outForDeliveryOrdersCount,
       },
     },
     'Previous Orders': {
-      Delivered: {order_status_id: [5], count: deliveredOrdersCount},
-      Rejected: {order_status_id: [17], count: rejectedOrdersCount},
-      Cancelled: {order_status_id: [7], count: cancelledOrdersCount},
+      Delivered: {order_status_id: 5, count: deliveredOrdersCount},
+      Rejected: {order_status_id: 17, count: rejectedOrdersCount},
+      Cancelled: {order_status_id: 7, count: cancelledOrdersCount},
     },
   };
   // console.log("newcount00000000",newcount)
   const MenuList = Object.keys(MainTab);
   const ordersData = useSelector(state => state.orders.loadOrdersById);
-  console.log(
-    'O====================> ~ OrdersScreen ~ ordersData:',
-    ordersData,
-  );
   const tokenExpMsg = useSelector(state => state.orders.message);
   const newcount = useSelector(state => state.orders.newOrderCount);
   const newOrderFlag = useSelector(
@@ -179,7 +176,7 @@ const OrdersScreen = ({navigation, route}) => {
     let Token = await AsyncStorage.getItem('token');
     let UserMobile = await AsyncStorage.getItem('MobileNumber');
     let merchanrInfo = await api.getMerchantInfo(UserMobile, Token);
-    console.log('merchant info -------------', merchanrInfo.data);
+    // console.log('merchant info -------------', merchanrInfo.data);
     if (merchanrInfo?.message === 'UnAuthorized Access') {
       // console.log("came in======>")
       setIsMerchantTokenExpired(true);
@@ -218,6 +215,7 @@ const OrdersScreen = ({navigation, route}) => {
     isFromNotification = false,
     loadsData = true,
   ) => {
+    //console.log('order_status_id=============>', order_status_id);
     setIsLoading(true);
     setDisplayOrders();
     setRefreshing(true);
@@ -249,13 +247,22 @@ const OrdersScreen = ({navigation, route}) => {
   };
 
   const loadOrdersById = async (main_tab_key, sub_tab_Key) => {
-    console.log('Store_Type', storeType);
+    const storeType = await AsyncStorage.getItem('StoreType');
+    const order_status_id =
+      (storeType === 'nexus' || storeType === 'forum') &&
+      MainTab[main_tab_key][sub_tab_Key].order_status_id == 1
+        ? 20
+        : MainTab[main_tab_key][sub_tab_Key].order_status_id;
     loadMerchantInfo();
     setDisplayOrders();
     setIsLoading(true);
     setMainTabKey(main_tab_key);
     setSubTabKey(sub_tab_Key);
     setorderstatusid(MainTab[main_tab_key][sub_tab_Key].order_status_id);
+    await AsyncStorage.setItem(
+      'order_status_id',
+      MainTab[main_tab_key][sub_tab_Key].order_status_id.toString(),
+    );
 
     let api = new DeveloperAPIClient();
     let Token = await AsyncStorage.getItem('token');
@@ -265,14 +272,15 @@ const OrdersScreen = ({navigation, route}) => {
     let orderStatusId;
 
     if (sub_tab_Key === 'New\r\nOrders') {
+      console.log('merchanrInfo.data.store_type', merchanrInfo.data.store_type);
       if (merchanrInfo.data.default_order_status_id) {
         orderStatusId = merchanrInfo.data.default_order_status_id.toString();
         await AsyncStorage.setItem('order_status_id', orderStatusId);
         setNewOrderStatus(
-          merchanrInfo.data.store_type === 'default' ? [1, 19, 20] : [20],
+          merchanrInfo.data.store_type === 'default' ? [1, 19, 20] : 20,
         );
         loadorders(
-          merchanrInfo.data.store_type === 'default' ? [1, 19, 20] : [20],
+          merchanrInfo.data.store_type === 'default' ? [1, 19, 20] : 20,
           1,
           false,
         );
@@ -348,7 +356,7 @@ const OrdersScreen = ({navigation, route}) => {
         );
         setNewOrderStatus(merchantInfo.data.default_order_status_id);
         loadorders(
-          merchantInfo.data.store_type === 'default' ? [1, 19, 20] : [20],
+          merchantInfo.data.store_type === 'default' ? [1, 19, 20] : 20,
           1,
           false,
         );
@@ -397,39 +405,6 @@ const OrdersScreen = ({navigation, route}) => {
     }
     setRefreshing(false);
   };
-
-  // const declineorder = async (
-  //   order_id,
-  //   status_id,
-  //   comments,
-  //   customer_mobile,
-  //   { custom_feild: { amount, payment_link, image_path } }
-  // ) => {
-  //   console.log('246')
-  //   const api = new DeveloperAPIClient();
-  //   let UserMobile = await AsyncStorage.getItem("MobileNumber");
-  //   console.log('249')
-  //   let statusdata = await api.getorderupdate(
-  //     UserMobile,
-  //     order_id,
-  //     status_id,
-  //     comments.trim(),
-  //     customer_mobile,
-  //     '',
-  //     { custom_feild: { amount, payment_link, image_path } }
-  //   );
-  //   console.log('259')
-  //   setRefreshing(true);
-  //   setDisplayOrders();
-  //   loadorders(order_status_id, 1, false);
-  //   if (statusdata.data != undefined) {
-  //     if (status_id == 17) {
-  //       Toast.showWithGravity("Order Rejected.", Toast.LONG, Toast.BOTTOM);
-  //       setCurrentPage(1);
-  //     }
-  //   }
-  //   setRefreshing(false);
-  // };
 
   const loadOrdersByOrderId = async order_id => {
     const api = new DeveloperAPIClient();
@@ -624,14 +599,12 @@ const OrdersScreen = ({navigation, route}) => {
         />
 
         <View style={styles.header}>
-          <View style={{marginLeft: 10}}>
+          <View style={{marginLeft: 0}}>
             <Text
               style={{
                 color: '#2B2520',
                 fontFamily: 'Poppins-Medium',
                 fontSize: 20,
-                flex: 1,
-                textAlign: 'left',
               }}>
               {header}
             </Text>
@@ -641,7 +614,7 @@ const OrdersScreen = ({navigation, route}) => {
               button={MoreIcon}
               buttonStyle={{
                 width: 23,
-                height: 25.5,
+                height: 15.5,
                 resizeMode: 'center',
               }}
               options={MenuList}
@@ -654,6 +627,11 @@ const OrdersScreen = ({navigation, route}) => {
           <View
             style={{
               flexDirection: 'row',
+              // borderWidth: 1,
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: 10,
+              width: '100%',
             }}>
             {Object.keys(MainTab[main_tab_key]) &&
               Object.keys(MainTab[main_tab_key]).map((val, i) => {
@@ -665,10 +643,9 @@ const OrdersScreen = ({navigation, route}) => {
                     style={{
                       backgroundColor:
                         sub_tab_Key === val ? '#51AF5E' : '#F2F7F9',
-                      margin: 5,
                       padding: 5,
-                      height: 135,
-                      width: 110,
+                      width: '32%',
+                      aspectRatio: 1,
                       borderRadius: 5,
                       borderColor: sub_tab_Key === val ? '#337D3E' : '#F2F7F9',
                     }}>
@@ -707,6 +684,10 @@ const OrdersScreen = ({navigation, route}) => {
           <View
             style={{
               flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: 10,
+              width: '100%',
             }}>
             {Object.keys(MainTab[main_tab_key]) &&
               Object.keys(MainTab[main_tab_key]).map((val, i) => {
@@ -718,10 +699,9 @@ const OrdersScreen = ({navigation, route}) => {
                     style={{
                       backgroundColor:
                         sub_tab_Key === val ? '#51AF5E' : '#F2F7F9',
-                      margin: 5,
                       padding: 5,
-                      height: 125,
-                      width: 106,
+                      width: '32%',
+                      aspectRatio: 1,
                       borderRadius: 5,
                       borderColor: sub_tab_Key === val ? '#337D3E' : '#F2F7F9',
                     }}>
@@ -788,7 +768,7 @@ const OrdersScreen = ({navigation, route}) => {
                           price={item.total}
                           name={item.firstname}
                           ID={item.order_id}
-                          products={item.products}
+                          products={item?.products || []}
                           orderhistory={item.order_history}
                           orderType={item.payment_method}
                           time={item.date_added}
@@ -1092,6 +1072,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFF',
+    padding: 10,
   },
   scrollView: {
     flex: 1,
@@ -1125,6 +1106,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginHorizontal: 5,
     marginVertical: 15,
+    alignItems: 'center',
+    justifyContent: 'space-between',
     paddingTop: 15,
   },
   mainHeader: {

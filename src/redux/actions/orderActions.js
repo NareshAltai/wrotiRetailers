@@ -20,7 +20,7 @@ export const loadorders = (
       Token,
       currentPage,
     );
-    console.log('---------orders-------->', allOrdersData.data.orders);
+    // console.log('---------orders-------->', allOrdersData.data.orders);
     dispatch({
       type: actionTypes.LOAD_ORDERS_BY_ID,
       payload: allOrdersData.data.orders,

@@ -1591,6 +1591,7 @@ export default class DeveloperAPIClient extends RestClient {
 
   getcatsURL = () => {
     return `${DEVELOPER_API_URL}/v1/roti/getCategories`;
+    // return `${DEVELOPER_API_URL}/v1/catalog/getAllCategories`;
 
     // http://wroti.app/v1/roti/getOrdersByCustomer
   };
@@ -1604,6 +1605,7 @@ export default class DeveloperAPIClient extends RestClient {
       offset: 1,
       status: 2,
     };
+    console.log('--------------->reqBody', reqBody, url);
     let apiResponse = await Api.post(url, reqBody, '', '', {
       'Content-Type': 'application/json',
     });
@@ -1701,7 +1703,7 @@ export default class DeveloperAPIClient extends RestClient {
       // devlieryBoyId
       custom_feild: {deliveryBoyId: deliveryBoyId ? deliveryBoyId : ''},
     };
-    console.log('reqBody===', reqBody, url);
+    console.log('reqBody=== for order update', reqBody, url);
     // return false;
     let apiResponse = await Api.post(url, reqBody, '', '', {
       'Content-Type': 'application/json',
@@ -1773,18 +1775,18 @@ export default class DeveloperAPIClient extends RestClient {
     let url = this.getOrdersHistoryURL();
     let inputData = {
       mobileNumber: UserMobile,
-      order_status_ids: order_status_id,
+      order_status_id: order_status_id,
       merchantToken: Token,
       offset: currentPage,
       limit: `${PAGE_LIMIT}`,
     };
 
-    console.log('input data ===>', inputData, 'url', url);
+    console.log('input data ===>new', inputData, 'url', url);
 
     let apiResponse = await Api.post(url, inputData, '', '', {
       'Content-Type': 'application/json',
     });
-    console.log('apiResponse==orders===>', JSON.stringify(apiResponse.data));
+    // console.log('apiResponse==orders===>', JSON.stringify(apiResponse.data));
     return apiResponse;
   };
 
@@ -2112,6 +2114,7 @@ export default class DeveloperAPIClient extends RestClient {
       limit: limit,
       offset: offset,
     };
+    console.log('payLoad orders==================>', payLoad, 'url:', url);
     let apiResponse = await Api.post(url, payLoad, '', '', {
       'Content-Type': 'application/json',
     });

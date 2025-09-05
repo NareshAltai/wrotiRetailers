@@ -16,7 +16,7 @@ import DeveloperAPIClient from '../../state/middlewares/DeveloperAPIClient';
 import moment from 'moment';
 import io from 'socket.io-client';
 import Toast from 'react-native-simple-toast';
-// import DropDownPicker from 'react-native-dropdown-picker';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 const ChattingBox = ({navigation, route}) => {
   const theme = useTheme();
@@ -352,19 +352,19 @@ const ChattingBox = ({navigation, route}) => {
         </View>
       </View>
 
-      {/* <DropDownPicker
+      <DropDownPicker
         open={open}
         value={value}
         items={items}
         setOpen={setOpen}
         setValue={setValue}
         setItems={setItems}
-        onChangeValue={()=>handleChange()}
+        onChangeValue={() => handleChange()}
         placeholder="Select Status"
         style={styles.dropdown}
         dropDownStyle={styles.dropdownContainer}
         containerStyle={styles.dropdownWrapper}
-      /> */}
+      />
 
       <FlatList
         data={chatsMessage}

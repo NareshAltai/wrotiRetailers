@@ -13,7 +13,7 @@ import {useTheme} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DeveloperAPIClient from '../../state/middlewares/DeveloperAPIClient';
 import {Divider} from 'react-native-paper';
-// import DropDownPicker from 'react-native-dropdown-picker';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 const ChatsScreen = ({navigation}) => {
   const theme = useTheme();
@@ -387,19 +387,19 @@ const ChatsScreen = ({navigation}) => {
       </View>
 
       <>
-        {/* <DropDownPicker
-        open={open}
-        value={value}
-        items={items}
-        setOpen={setOpen}
-        setValue={setValue}
-        setItems={setItems}
-        onChangeValue={handleChange}
-        placeholder="Select Status"
-        style={styles.dropdown}
-        dropDownContainerStyle={styles.dropdownContainer}
-        containerStyle={styles.dropdownWrapper}
-      /> */}
+        <DropDownPicker
+          open={open}
+          value={value}
+          items={items}
+          setOpen={setOpen}
+          setValue={setValue}
+          setItems={setItems}
+          onChangeValue={handleChange}
+          placeholder="Select Status"
+          style={styles.dropdown}
+          dropDownContainerStyle={styles.dropdownContainer}
+          containerStyle={styles.dropdownWrapper}
+        />
 
         {tabValue === 'Active' &&
           (filteredActiveUser.length > 0 ? (

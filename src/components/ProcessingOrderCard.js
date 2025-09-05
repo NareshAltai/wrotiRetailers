@@ -245,6 +245,7 @@ export default class OrderCard extends React.Component {
                 fontFamily: 'Poppins-SemiBold',
                 flex: 1.8,
                 textAlign: 'left',
+                color: '#000',
               }}>
               {this.props.name}
             </Text>
@@ -255,6 +256,7 @@ export default class OrderCard extends React.Component {
                   fontFamily: 'Poppins-Regular',
                   textAlign: 'right',
                   flex: 1.3,
+                  color: '#000',
                 }}>
                 {/* {this.props.time} */}
                 {moment(`${this.props.time}`)
@@ -268,6 +270,7 @@ export default class OrderCard extends React.Component {
                   fontFamily: 'Poppins-Regular',
                   textAlign: 'right',
                   flex: 1.3,
+                  color: '#000',
                 }}>
                 {/* {this.props.time} */}
                 {moment
@@ -284,6 +287,7 @@ export default class OrderCard extends React.Component {
                 fontFamily: 'Poppins-Regular',
                 marginRight: 5,
                 letterSpacing: 3,
+                color: '#000',
               }}>
               #{this.props.ID}
             </Text>
@@ -314,6 +318,7 @@ export default class OrderCard extends React.Component {
                 fontFamily: 'Poppins-Bold',
                 textAlign: 'right',
                 flex: 1,
+                color: '#000',
               }}>
               {this.props.price}
             </Text>
@@ -440,7 +445,7 @@ export default class OrderCard extends React.Component {
                   flex: 1.8,
                   textAlign: 'left',
                 }}>
-                {/* 1. {this.props.products[0].name} */}
+                1. {this.props.products[0].name}
               </Text>
               <Text
                 style={{
@@ -448,8 +453,9 @@ export default class OrderCard extends React.Component {
                   fontFamily: 'Poppins-Bold',
                   flex: 1,
                   textAlign: 'right',
+                  color: '#000',
                 }}>
-                {/* Total {this.props.products.length} items */}
+                Total {this.props?.products?.length || '_'} items
               </Text>
             </View>
           </View>
@@ -462,12 +468,12 @@ export default class OrderCard extends React.Component {
               marginTop: 10,
               width: '100%',
               height: 45,
-              paddingTop: 11,
-              paddingBottom: 15,
               backgroundColor: '#51AF5E',
               borderRadius: 10,
               borderWidth: 1,
               borderColor: '#fff',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
             //onPress={() => this.RBSheet.open(this.props.checked == false)}
             onPress={() => this.dispatchOrder(this.props.ID)}>
@@ -486,7 +492,7 @@ export default class OrderCard extends React.Component {
           </TouchableOpacity>
         ) : (
           <View style={{flexDirection: 'row'}}>
-            <Text style={{}}>Note : </Text>
+            <Text style={{color: '#000'}}>Note : </Text>
             <Text style={{color: 'red'}}>
               This order will be delivered by WROTI
             </Text>
@@ -832,7 +838,8 @@ export default class OrderCard extends React.Component {
               )}
               <View style={{marginHorizontal: 6, marginVertical: 20}}>
                 <TextInput
-                  placeholder="Write a message"
+                  placeholder="Write a message to the customer"
+                  placeholderTextColor={'#9BA0A7'}
                   value={this.state.name}
                   onChangeText={text => this.handleText(text)}
                   style={{
@@ -840,6 +847,7 @@ export default class OrderCard extends React.Component {
                     margin: 10,
                     padding: 10,
                     backgroundColor: '#F7F7FC',
+                    color: '#000',
                   }}
                   onSubmitEditing={() => this.markasdelivered()}
                 />

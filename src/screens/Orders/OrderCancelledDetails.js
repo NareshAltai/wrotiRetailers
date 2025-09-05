@@ -90,7 +90,7 @@ const OrdersScreen = ({navigation, route}) => {
     let LOC = allOrdersData.data.orders.order_info.shipping_custom_field;
     //console.log("LOC+", LOC);
     if (LOC != false) {
-      const gps = LOC.location.split(',');
+      const gps = LOC?.location?.split(',');
       setlocation(gps);
     }
     //console.log("allordersdetails######", JSON.stringify(allOrdersData.data));
@@ -1287,7 +1287,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginHorizontal: 5,
     marginVertical: 15,
-    paddingTop: 15,
+    paddingTop: 25,
   },
   mainHeader: {
     backgroundColor: '#ffffff',

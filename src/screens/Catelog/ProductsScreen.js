@@ -29,6 +29,14 @@ import {useDispatch, useSelector} from 'react-redux';
 //import NetworkChecker from "react-native-network-checker";
 import {useIsFocused} from '@react-navigation/native';
 import CustomLoadingButton from '../../components/CustomLoadingButton';
+import Feather from 'react-native-vector-icons/Feather';
+import Header from '../../components/Header';
+import CustomDropDown from '../../components/CustomDropdown';
+import {
+  responsiveHeight,
+  responsiveWidth,
+} from 'react-native-responsive-dimensions';
+import {wp} from '../../utils/scale';
 
 const ProductScreen = ({navigation}) => {
   const dispatch = useDispatch();
@@ -53,6 +61,7 @@ const ProductScreen = ({navigation}) => {
   const [languages, setlanguages] = React.useState();
   const [totalProducts, setTotalProducts] = React.useState();
   const [storeType, setStoreType] = React.useState();
+  const [selectedItem, setSelectedItem] = useState(null);
 
   const products = useSelector(
     state => state.product.productsListingByCategory,
@@ -126,6 +135,10 @@ const ProductScreen = ({navigation}) => {
       setcattype(allcatsdata.data.category_info);
       setCats(allcatsdata.data.category_info[0]);
       loadproducts(allcatsdata.data.category_info[0].category_id);
+      setSelectedItem({
+        id: allcatsdata.data.category_info[0].category_id,
+        name: allcatsdata.data.category_info[0].name,
+      });
       setIsLoading(false);
     }
     // console.log("CATS=====", cats.category_id);
@@ -331,7 +344,7 @@ const ProductScreen = ({navigation}) => {
     setDisplayProducts();
     setVisibleCats(false);
     setCats(val);
-    loadproducts(val.category_id, 1);
+    loadproducts(val.id, 1);
     setCurrentPage(1);
     setIsLoading(false);
   };
@@ -692,6 +705,10 @@ const ProductScreen = ({navigation}) => {
       <Divider />
     </View>
   );
+  const dropdownList = cattype?.map(item => ({
+    name: item.name,
+    id: item.category_id,
+  }));
 
   return (
     <View style={styles.container}>
@@ -713,91 +730,48 @@ const ProductScreen = ({navigation}) => {
             backgroundColor="#F4F5F7"
             barStyle={theme.dark ? 'light-content' : 'dark-content'}
           />
+          <Header title={'Products'} />
 
           <View
             style={{
               flexDirection: 'row',
-              marginHorizontal: 5,
-              marginVertical: 15,
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginVertical: responsiveHeight(1),
+              paddingHorizontal: responsiveWidth(3),
             }}>
+            <CustomDropDown
+              isOpen={visibleCats}
+              onToggle={() => setVisibleCats(!visibleCats)}
+              data={dropdownList}
+              selectedItem={selectedItem}
+              onSelectItem={item => {
+                setSelectedItem(item);
+                updatecat(item);
+              }}
+              placeholder={decode(cats.name) || 'Select Category'}
+              labelExtractor={item => item.name}
+              maxHeight={200}
+              dropdownContainerStyles={{
+                width: responsiveWidth(80),
+              }}
+            />
             <View
               style={{
-                flexDirection: 'row',
-                marginHorizontal: 5,
-                paddingTop: 25,
+                flex: 1,
+                alignItems: 'flex-end',
+                // marginRight: responsiveWidth(3),
+                // marginTop: 10,
+                // marginLeft: 70,
               }}>
-              <View
-                style={{
-                  height: 40,
-                  width: '75%',
-                  padding: 10,
-                  backgroundColor: '#F7F7FC',
-                  borderRadius: 6,
-                  borderWidth: 1,
-                  borderColor: '#3AA44D',
-                }}>
-                <Menu
-                  visible={visibleCats}
-                  onDismiss={() => setVisibleCats(!visibleCats)}
-                  anchor={
-                    <TouchableOpacity
-                      style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        marginHorizontal: 10,
-                      }}
-                      activeOpacity={0.7}
-                      onPress={() => setVisibleCats(!visibleCats)}>
-                      <Text
-                        numberOfLines={1}
-                        style={{fontFamily: 'Poppins-Medium', color: '#000'}}>
-                        {cats.name != null ? decode(cats.name) : ''}
-                      </Text>
-                      <View>
-                        <Image
-                          style={{height: 20, width: 15}}
-                          source={require('../../assets/ddarrow.png')}
-                        />
-                      </View>
-                    </TouchableOpacity>
-                  }>
-                  {cattype &&
-                    cattype.map((val, i) => {
-                      return (
-                        <Menu.Item
-                          key={i}
-                          title={decode(val.name)}
-                          onPress={() => updatecat(val)}
-                        />
-                      );
-                    })}
-                </Menu>
-              </View>
-              <View
-                style={{
-                  flex: 1,
-                  alignItems: 'flex-end',
-                  marginTop: 10,
-                  marginLeft: 70,
-                }}>
-                <TouchableOpacity
-                  activeOpacity={0.6}
-                  onPress={() => navigation.navigate('SearchScreen')}>
-                  <Image
-                    style={{
-                      width: 25,
-                      height: 25,
-                      resizeMode: 'center',
-                      //flexDirection: "row"
-                    }}
-                    source={require('../../assets/path2x.png')}
-                  />
-                </TouchableOpacity>
-              </View>
+              <TouchableOpacity
+                style={{marginRight: wp(2)}}
+                activeOpacity={0.6}
+                onPress={() => navigation.navigate('SearchScreen')}>
+                <Feather name="search" size={25} color="#9CA3AF" />
+              </TouchableOpacity>
             </View>
           </View>
-          <Divider />
 
           {/* <View
         style={{
@@ -947,35 +921,28 @@ const ProductScreen = ({navigation}) => {
               <ActivityIndicator size="large" color="#51AF5E" />
             ) : (
               <>
-                {displayProducts?.length !== 0 ? (
-                  <View View style={styles.body}>
-                    <FlatList
-                      data={displayProducts}
-                      numColumns={1}
-                      nestedScrollEnabled={true}
-                      renderItem={renderItem}
-                      onEndReached={() => _handleLoadMore()}
-                      onEndReachedThreshold={0.5}
-                      marginBottom={20}
-                    />
-                  </View>
-                ) : (
-                  <>
-                    {isLoading ? (
-                      <ActivityIndicator size="large" color="#51AF5E" />
-                    ) : (
+                <View View style={styles.body}>
+                  <FlatList
+                    data={displayProducts}
+                    numColumns={1}
+                    nestedScrollEnabled={true}
+                    renderItem={renderItem}
+                    onEndReached={() => _handleLoadMore()}
+                    onEndReachedThreshold={0.5}
+                    marginBottom={20}
+                    ListEmptyComponent={
                       <Text
                         style={{
-                          // flex: 1,
                           textAlign: 'center',
                           justifyContent: 'center',
                           marginTop: '70%',
+                          color: '#000',
                         }}>
                         No Products Found
                       </Text>
-                    )}
-                  </>
-                )}
+                    }
+                  />
+                </View>
               </>
             )}
           </View>

@@ -31,7 +31,7 @@ import Toast from 'react-native-simple-toast';
 import {useFocusEffect} from '@react-navigation/native';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
-import RNFetchBlob from 'react-native-blob-util';
+import RNBlobUtil from 'react-native-blob-util';
 import Header from '../../components/Header';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -139,10 +139,7 @@ const SalesReport = ({navigation, title}) => {
   const downloadContent = async () => {
     const hasPermission = await requestStoragePermission();
     if (!hasPermission) {
-      Alert.alert(
-        'Permission Denied',
-        'You need to give storage permission to download the file',
-      );
+      Alert.alert('Permission Denied', 'You need to give storage permission');
       return;
     }
 
@@ -154,19 +151,50 @@ const SalesReport = ({navigation, title}) => {
             `${item.date_start},${item.date_end},${item.orders},${item.products},"${item.total}"\n`,
         )
         .join('');
-
       const fileContent = header + content;
-      const directoryPath = RNFetchBlob.fs.dirs.DownloadDir;
-      const timestamp = new Date().toISOString().replace(/[:.-]/g, '');
-      const filePath = `${directoryPath}/sales_report_${timestamp}.csv`;
 
-      // Write the content to a file
-      await RNFetchBlob.fs.writeFile(filePath, fileContent, 'utf8');
-      console.log('File saved:', filePath);
-      Alert.alert('Success', 'File downloaded successfully');
-    } catch (error) {
-      console.error('Error saving file:', error);
-      Alert.alert('Error', 'Failed to download the file');
+      const timestamp = new Date().toISOString().replace(/[:.-]/g, '');
+      const fileName = `sales_reports_${timestamp}.csv`;
+      const filePath = `${RNBlobUtil.fs.dirs.DownloadDir}/${fileName}`;
+
+      // ✅ 1. Write the file
+      await RNBlobUtil.fs.writeFile(filePath, fileContent, 'utf8');
+
+      // ✅ 2. Register with DownloadManager
+      RNBlobUtil.android.addCompleteDownload({
+        title: fileName,
+        description: 'Customer report CSV',
+        mime: 'text/csv',
+        path: filePath,
+        showNotification: true,
+        scannable: true,
+      });
+
+      console.log('Saved to Downloads:', filePath);
+
+      // ✅ 3. Show Alert with "Open" option
+      Alert.alert(
+        'Success',
+        `File saved in Downloads:\n${fileName}`,
+        [
+          {text: 'OK'},
+          {
+            text: 'Open File',
+            onPress: () => {
+              try {
+                RNBlobUtil.android.actionViewIntent(filePath, 'text/csv');
+              } catch (e) {
+                console.log('Error opening file:', e);
+                Alert.alert('Error', 'Could not open the file');
+              }
+            },
+          },
+        ],
+        {cancelable: true},
+      );
+    } catch (err) {
+      console.error('Error saving file:', err);
+      Alert.alert('Error', 'Failed to save file');
     }
   };
 
@@ -229,10 +257,10 @@ const SalesReport = ({navigation, title}) => {
       pageNumber,
       limit,
     );
-    console.log(
-      'reportsResponse =============',
-      JSON.stringify(reportsResponse.data.data),
-    );
+    // console.log(
+    //   'reportsResponse =============',
+    //   JSON.stringify(reportsResponse.data.data),
+    // );
     setTotalSales(prevSales =>
       pageNumber === 1
         ? reportsResponse.data.data.orders
@@ -244,6 +272,7 @@ const SalesReport = ({navigation, title}) => {
   };
 
   const loadMoreData = async () => {
+    console.log('called------------>');
     if (!loading && totalSales.length < total) {
       const nextPage = page + 1;
       setPage(nextPage);
@@ -631,28 +660,29 @@ const SalesReport = ({navigation, title}) => {
         onCancel={() => setOpenEndDate(false)}
       />
 
-      <ScrollView>
-        {initialLoading ? (
-          <ActivityIndicator size="large" color="green" />
-        ) : totalSales.length === 0 ? (
-          <Text style={{textAlign: 'center', margin: 20, color: '#000'}}>
-            No sales report to display
-          </Text>
-        ) : (
-          <FlatList
-            data={totalSales}
-            renderItem={renderItem}
-            keyExtractor={item => item.id}
-            onEndReached={loadMoreData}
-            onEndReachedThreshold={0.5}
-            ListFooterComponent={
-              loading && page > 1 ? (
-                <ActivityIndicator size="small" color="green" />
-              ) : null
-            }
-          />
-        )}
-      </ScrollView>
+      {initialLoading ? (
+        <ActivityIndicator size="large" color="green" />
+      ) : totalSales.length === 0 ? (
+        <Text style={{textAlign: 'center', margin: 20, color: '#000'}}>
+          No sales report to display
+        </Text>
+      ) : (
+        <FlatList
+          data={totalSales}
+          renderItem={renderItem}
+          keyExtractor={(item, index) =>
+            item.id?.toString() || index.toString()
+          }
+          onEndReached={loadMoreData}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={
+            loading && page > 1 ? (
+              <ActivityIndicator size="small" color="green" />
+            ) : null
+          }
+        />
+      )}
+
       {/* </View> */}
 
       {/* download report button */}

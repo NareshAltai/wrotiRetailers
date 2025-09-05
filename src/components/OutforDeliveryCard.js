@@ -337,7 +337,7 @@ export default class OrderCard extends React.Component {
                   flex: 1.8,
                   textAlign: 'left',
                 }}>
-                {/* 1. {this.props.products[0].name} */}
+                1. {this.props.products[0].name}
               </Text>
               <Text
                 style={{
@@ -358,12 +358,12 @@ export default class OrderCard extends React.Component {
               marginTop: 10,
               width: '100%',
               height: 45,
-              paddingTop: 11,
-              paddingBottom: 15,
               backgroundColor: '#51AF5E',
               borderRadius: 10,
               borderWidth: 1,
               borderColor: '#fff',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
             onPress={() => this.RBSheet.open()}>
             <Text
@@ -433,7 +433,8 @@ export default class OrderCard extends React.Component {
             <View style={{marginHorizontal: 4, marginVertical: 10}}>
               <TextInput
                 multiline={true}
-                placeholder="Leave a comments"
+                placeholder="Write a message to the customer"
+                placeholderTextColor={'grey'}
                 value={this.state.name}
                 underlineColorAndroid="#fff"
                 onChangeText={text => this.handleText(text)}
@@ -442,6 +443,7 @@ export default class OrderCard extends React.Component {
                   borderWidth: 1,
                   borderColor: 'lightgrey',
                   paddingHorizontal: 6,
+                  color: '#000',
                 }}
               />
             </View>

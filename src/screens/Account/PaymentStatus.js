@@ -91,7 +91,7 @@ const PaymentStatusScreen = ({navigation}) => {
       10,
       1,
     );
-    console.log('allOrdersData--------', allOrdersData.data);
+    // console.log('allOrdersData--------', allOrdersData.data);
     if (allOrdersData?.data?.success) {
       // Set only the first five orders from the response
       setSearchData(allOrdersData.data.orders.slice(0, 5));
@@ -281,12 +281,20 @@ const PaymentStatusScreen = ({navigation}) => {
     let Api = new ApiClient();
     let Token = await AsyncStorage.getItem('token');
     let UserMobile = await AsyncStorage.getItem('MobileNumber');
+    const order_telephone = searchData?.find(
+      order => order.order_id === order_id,
+    ).telephone;
+    console.log(
+      'res------------------------>',
+      searchData?.order_info?.telephone,
+      searchData,
+    );
     let updateOrderStatus = await Api.getorderupdate(
       UserMobile,
       order_id,
       status_id,
       '',
-      searchData?.order_info?.telephone,
+      order_telephone,
       '',
       '',
     );
@@ -319,6 +327,7 @@ const PaymentStatusScreen = ({navigation}) => {
       );
       setIsModal(false);
       searchOrder(searchBy, order_id);
+      navigation.navigate('Orders');
       // checkPaymentStatus(order_id);
     }
     setIsPushingToPOS(false);
@@ -347,6 +356,7 @@ const PaymentStatusScreen = ({navigation}) => {
                 fontFamily: 'Poppins-Medium',
                 marginVertical: 2,
                 marginHorizontal: 10,
+                color: '#000',
               }}>
               Order ID{' '}
             </Text>
@@ -356,6 +366,7 @@ const PaymentStatusScreen = ({navigation}) => {
                 fontFamily: 'Poppins-Medium',
                 marginVertical: 2,
                 marginHorizontal: 10,
+                color: '#000',
               }}>
               Current Status{' '}
             </Text>
@@ -365,6 +376,7 @@ const PaymentStatusScreen = ({navigation}) => {
                 fontFamily: 'Poppins-Medium',
                 marginVertical: 2,
                 marginHorizontal: 10,
+                color: '#000',
               }}>
               Mobile{' '}
             </Text>
@@ -374,6 +386,7 @@ const PaymentStatusScreen = ({navigation}) => {
                 fontFamily: 'Poppins-Medium',
                 marginVertical: 2,
                 marginHorizontal: 10,
+                color: '#000',
               }}>
               Amount{' '}
             </Text>
@@ -383,6 +396,7 @@ const PaymentStatusScreen = ({navigation}) => {
                 fontFamily: 'Poppins-Medium',
                 marginVertical: 2,
                 marginHorizontal: 10,
+                color: '#000',
               }}>
               D O T{' '}
             </Text>
@@ -392,6 +406,7 @@ const PaymentStatusScreen = ({navigation}) => {
                 fontFamily: 'Poppins-Medium',
                 marginVertical: 2,
                 marginHorizontal: 10,
+                color: '#000',
               }}>
               Action{' '}
             </Text>
@@ -402,6 +417,7 @@ const PaymentStatusScreen = ({navigation}) => {
                 fontSize: 16,
                 fontFamily: 'Poppins-Medium',
                 marginVertical: 2,
+                color: '#000',
               }}>
               :
             </Text>
@@ -410,6 +426,7 @@ const PaymentStatusScreen = ({navigation}) => {
                 fontSize: 16,
                 fontFamily: 'Poppins-Medium',
                 marginVertical: 2,
+                color: '#000',
               }}>
               :
             </Text>
@@ -418,6 +435,7 @@ const PaymentStatusScreen = ({navigation}) => {
                 fontSize: 16,
                 fontFamily: 'Poppins-Medium',
                 marginVertical: 2,
+                color: '#000',
               }}>
               :
             </Text>
@@ -426,6 +444,7 @@ const PaymentStatusScreen = ({navigation}) => {
                 fontSize: 16,
                 fontFamily: 'Poppins-Medium',
                 marginVertical: 2,
+                color: '#000',
               }}>
               :
             </Text>
@@ -434,6 +453,7 @@ const PaymentStatusScreen = ({navigation}) => {
                 fontSize: 16,
                 fontFamily: 'Poppins-Medium',
                 marginVertical: 2,
+                color: '#000',
               }}>
               :
             </Text>
@@ -593,6 +613,7 @@ const PaymentStatusScreen = ({navigation}) => {
                       fontFamily: 'Poppins-Medium',
                       marginVertical: 10,
                       marginHorizontal: 10,
+                      color: '#000',
                     }}>
                     ORDER ID :
                   </Text>
@@ -602,6 +623,7 @@ const PaymentStatusScreen = ({navigation}) => {
                       fontFamily: 'Poppins-Medium',
                       marginVertical: 10,
                       marginHorizontal: 10,
+                      color: '#000',
                     }}>
                     CURRENT STATUS :
                   </Text>
@@ -613,6 +635,7 @@ const PaymentStatusScreen = ({navigation}) => {
                       fontFamily: 'Poppins-Medium',
                       marginVertical: 10,
                       marginHorizontal: 10,
+                      color: '#000',
                     }}>
                     {orderId}
                   </Text>
@@ -622,6 +645,7 @@ const PaymentStatusScreen = ({navigation}) => {
                       fontFamily: 'Poppins-SemiBold',
                       marginVertical: 10,
                       marginHorizontal: 10,
+                      color: '#000',
                     }}>
                     {paymentStatusMsg && paymentStatusMsg}
                   </Text>
@@ -635,6 +659,7 @@ const PaymentStatusScreen = ({navigation}) => {
                       fontFamily: 'Poppins-Regular',
                       marginVertical: 10,
                       marginHorizontal: 10,
+                      color: '#000',
                     }}>
                     Payment received from the Bank, please push this order to
                     POS.
@@ -649,14 +674,13 @@ const PaymentStatusScreen = ({navigation}) => {
                       onPress={() => pushOrderToPOS(orderId)}
                       style={{
                         marginTop: 10,
+                        backgroundColor: '#337D3E',
                         width: 150,
                         height: 35,
-                        paddingTop: '4%',
-                        paddingBottom: '9%',
-                        backgroundColor: '#337D3E',
                         borderRadius: 10,
-                        justifyContent: 'center',
+                        paddingBottom: '1%',
                         alignItems: 'center',
+                        justifyContent: 'center',
                       }}
                       disabled={isPushingToPOS} // Disable the button while loading
                     >
@@ -669,7 +693,6 @@ const PaymentStatusScreen = ({navigation}) => {
                             fontSize: 15,
                             alignSelf: 'center',
                             fontFamily: 'Poppins-SemiBold',
-                            marginBottom: 10,
                           }}>
                           Push to POS
                         </Text>
@@ -685,10 +708,11 @@ const PaymentStatusScreen = ({navigation}) => {
                         marginTop: 10,
                         width: 150,
                         height: 35,
-                        paddingTop: '4%',
-                        paddingBottom: '9%',
                         backgroundColor: '#DC4C4C',
                         borderRadius: 10,
+                        paddingBottom: '1%',
+                        alignItems: 'center',
+                        justifyContent: 'center',
                       }}>
                       <View>
                         <Text
@@ -713,6 +737,7 @@ const PaymentStatusScreen = ({navigation}) => {
                       fontFamily: 'Poppins-Regular',
                       marginVertical: 10,
                       marginHorizontal: 10,
+                      color: '#000',
                     }}>
                     Payment received from the Bank, please accept the order.
                   </Text>
@@ -727,18 +752,20 @@ const PaymentStatusScreen = ({navigation}) => {
                       style={{
                         marginTop: 10,
                         width: 150,
-                        height: 35,
-                        paddingTop: '4%',
-                        paddingBottom: '9%',
+                        height: 50,
+                        // paddingTop: '4%',
+                        // paddingBottom: '9%',
                         backgroundColor: '#337D3E',
                         borderRadius: 10,
+                        alignItems: 'center',
+                        justifyContent: 'center',
                       }}>
                       <View>
                         <Text
                           style={{
                             color: '#fff',
                             fontSize: 15,
-                            marginBottom: 15,
+                            // marginBottom: 15,
                             textAlign: 'center',
                             justifyContent: 'center',
                             alignItems: 'center',
@@ -758,18 +785,20 @@ const PaymentStatusScreen = ({navigation}) => {
                       style={{
                         marginTop: 10,
                         width: 150,
-                        height: 35,
-                        paddingTop: '4%',
-                        paddingBottom: '9%',
+                        height: 50,
+                        // paddingTop: '4%',
+                        // paddingBottom: '9%',
                         backgroundColor: '#DC4C4C',
                         borderRadius: 10,
+                        alignItems: 'center',
+                        justifyContent: 'center',
                       }}>
                       <View>
                         <Text
                           style={{
                             color: '#fff',
                             fontSize: 15,
-                            marginBottom: 15,
+                            // marginBottom: 15,
                             textAlign: 'center',
                             justifyContent: 'center',
                             alignItems: 'center',
@@ -796,6 +825,7 @@ const PaymentStatusScreen = ({navigation}) => {
                 fontFamily: 'Poppins-Medium',
                 marginVertical: 8,
                 marginHorizontal: 10,
+                color: '#000',
               }}>
               Search By :
             </Text>
@@ -821,6 +851,7 @@ const PaymentStatusScreen = ({navigation}) => {
                   marginVertical: 8,
                   marginHorizontal: 5,
                   color: searchBy === 'Mobile' ? 'green' : 'black',
+                  color: '#000',
                 }}>
                 Mobile Number
               </Text>
@@ -848,6 +879,7 @@ const PaymentStatusScreen = ({navigation}) => {
                   marginVertical: 8,
                   marginHorizontal: 5,
                   color: searchBy === 'Order Id' ? 'green' : 'black',
+                  color: '#000',
                 }}>
                 Order Id
               </Text>
@@ -940,6 +972,7 @@ const PaymentStatusScreen = ({navigation}) => {
                   fontFamily: 'Poppins-Medium',
                   marginVertical: 8,
                   marginHorizontal: 10,
+                  color: '#000',
                 }}>
                 Showing Results
               </Text>
@@ -968,6 +1001,7 @@ const PaymentStatusScreen = ({navigation}) => {
                         fontFamily: 'Poppins-Medium',
                         marginVertical: 2,
                         marginHorizontal: 10,
+                        color: '#000',
                       }}>
                       Order ID{' '}
                     </Text>
@@ -977,6 +1011,7 @@ const PaymentStatusScreen = ({navigation}) => {
                         fontFamily: 'Poppins-Medium',
                         marginVertical: 2,
                         marginHorizontal: 10,
+                        color: '#000',
                       }}>
                       Current Status{' '}
                     </Text>
@@ -986,6 +1021,7 @@ const PaymentStatusScreen = ({navigation}) => {
                         fontFamily: 'Poppins-Medium',
                         marginVertical: 2,
                         marginHorizontal: 10,
+                        color: '#000',
                       }}>
                       Mobile{' '}
                     </Text>
@@ -995,6 +1031,7 @@ const PaymentStatusScreen = ({navigation}) => {
                         fontFamily: 'Poppins-Medium',
                         marginVertical: 2,
                         marginHorizontal: 10,
+                        color: '#000',
                       }}>
                       Amount{' '}
                     </Text>
@@ -1004,6 +1041,7 @@ const PaymentStatusScreen = ({navigation}) => {
                         fontFamily: 'Poppins-Medium',
                         marginVertical: 2,
                         marginHorizontal: 10,
+                        color: '#000',
                       }}>
                       D O T{' '}
                     </Text>
@@ -1013,6 +1051,7 @@ const PaymentStatusScreen = ({navigation}) => {
                         fontFamily: 'Poppins-Medium',
                         marginVertical: 2,
                         marginHorizontal: 10,
+                        color: '#000',
                       }}>
                       Action{' '}
                     </Text>
@@ -1023,6 +1062,7 @@ const PaymentStatusScreen = ({navigation}) => {
                         fontSize: 16,
                         fontFamily: 'Poppins-Medium',
                         marginVertical: 2,
+                        color: '#000',
                       }}>
                       :
                     </Text>
@@ -1031,6 +1071,7 @@ const PaymentStatusScreen = ({navigation}) => {
                         fontSize: 16,
                         fontFamily: 'Poppins-Medium',
                         marginVertical: 2,
+                        color: '#000',
                       }}>
                       :
                     </Text>
@@ -1039,6 +1080,7 @@ const PaymentStatusScreen = ({navigation}) => {
                         fontSize: 16,
                         fontFamily: 'Poppins-Medium',
                         marginVertical: 2,
+                        color: '#000',
                       }}>
                       :
                     </Text>
@@ -1047,6 +1089,7 @@ const PaymentStatusScreen = ({navigation}) => {
                         fontSize: 16,
                         fontFamily: 'Poppins-Medium',
                         marginVertical: 2,
+                        color: '#000',
                       }}>
                       :
                     </Text>
@@ -1055,6 +1098,7 @@ const PaymentStatusScreen = ({navigation}) => {
                         fontSize: 16,
                         fontFamily: 'Poppins-Medium',
                         marginVertical: 2,
+                        color: '#000',
                       }}>
                       :
                     </Text>
@@ -1150,6 +1194,7 @@ const PaymentStatusScreen = ({navigation}) => {
                     fontFamily: 'Poppins-Medium',
                     marginVertical: 8,
                     marginHorizontal: 10,
+                    color: '#000',
                   }}>
                   Showing Results
                 </Text>
@@ -1157,7 +1202,8 @@ const PaymentStatusScreen = ({navigation}) => {
               <FlatList
                 data={searchData}
                 renderItem={renderItem}
-                marginBottom={213}
+                style={{marginBottom: 200}}
+                contentContainerStyle={{paddingBottom: 25}}
               />
             </View>
           )}

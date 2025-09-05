@@ -23,6 +23,8 @@ import Toast from 'react-native-simple-toast';
 // import ImagePicker from "../../components/image";
 import ImageUpload from '../../components/addImageComponentCategory';
 import CustomLoadingButton from '../../components/CustomLoadingButton';
+import Header from '../../components/Header';
+import Config from 'react-native-config';
 // import AnimateLoadingButton from "react-native-animate-loading-button";
 // import {Switch} from 'react-native-switch';
 
@@ -297,6 +299,14 @@ const CategoryScreen = ({navigation}) => {
     });
     return unsubscribe;
   }, []);
+  // const imageBaseUrl = 'https://ocuat.wroti.app/image/';
+  const getImageUrl = imageUrl => {
+    if (imageUrl?.startsWith('https://')) {
+      return imageUrl;
+    } else {
+      return Config.IMAGE_BASE_URL + imageUrl;
+    }
+  };
 
   const renderItem = ({item, index}) => (
     <View style={styles.category}>
@@ -311,7 +321,7 @@ const CategoryScreen = ({navigation}) => {
           }}
           source={{
             uri: item.image
-              ? item.image
+              ? getImageUrl(item.image)
               : 'https://highoncafeocuat.wroti.app/image/cache/no_image-76x76.png',
           }}
         />
@@ -646,54 +656,34 @@ const CategoryScreen = ({navigation}) => {
         backgroundColor="#F4F5F7"
         barStyle={theme.dark ? 'light-content' : 'dark-content'}
       />
-      <View
-        style={{
-          flexDirection: 'row',
-          marginHorizontal: 5,
-          marginVertical: 15,
-          paddingTop: 15,
-        }}>
-        <TouchableOpacity
-          activeOpacity={0.6}
-          onPress={() => navigation.goBack()}>
-          <Image
-            style={{width: 28, height: 28, resizeMode: 'center'}}
-            source={require('../../assets/back3x.png')}
-          />
-        </TouchableOpacity>
-        <View style={{marginLeft: 5}}>
-          <Text
-            style={{
-              color: '#0F0F0F',
-              fontFamily: 'Poppins-Bold',
-              fontSize: 16,
-              marginTop: 2,
-            }}>
-            Categories
-          </Text>
-        </View>
-        {store_type === 'default' && (
-          <View
-            style={{
-              flexDirection: 'row',
-              marginLeft: 'auto',
-            }}>
-            <TouchableOpacity
-              onPress={() => addNewCategory.RBSheetAddNewCategory.open()}>
-              <Text
-                style={{
-                  color: '#1B6890',
-                  fontFamily: 'Poppins-Medium',
-                  fontSize: 15,
-                  textAlign: 'right',
-                  marginLeft: '1%',
-                }}>
-                Add New Category
-              </Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      </View>
+      <Header
+        title={'Categories'}
+        rightContent={
+          store_type == 'default' ? (
+            <View
+              style={{
+                flexDirection: 'row',
+                marginLeft: 'auto',
+              }}>
+              <TouchableOpacity
+                onPress={() => addNewCategory.RBSheetAddNewCategory.open()}>
+                <Text
+                  style={{
+                    color: '#1B6890',
+                    fontFamily: 'Poppins-Medium',
+                    fontSize: 15,
+                    textAlign: 'right',
+                    marginLeft: '1%',
+                  }}>
+                  Add New Category
+                </Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <></>
+          )
+        }
+      />
       {isLoading == true ? (
         <ActivityIndicator size="large" color="#51AF5E" />
       ) : (

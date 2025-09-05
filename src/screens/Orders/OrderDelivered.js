@@ -1382,7 +1382,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginHorizontal: 5,
     marginVertical: 15,
-    paddingTop: 15,
+    paddingTop: 25,
   },
   mainHeader: {
     backgroundColor: '#ffffff',

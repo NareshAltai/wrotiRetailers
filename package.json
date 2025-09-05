@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "uatbuild": "react-native run-android — variant=uatDebug",
+    "android:uat": "react-native run-android --mode=uatdebug --active-arch-only",
     "productionbuild": "react-native run-android — variant=productionDebug",
     "android": "react-native run-android",
     "ios": "react-native run-ios",

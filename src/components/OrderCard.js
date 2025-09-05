@@ -22,6 +22,8 @@ import CustomLoadingButton from './CustomLoadingButton';
 // import AnimateLoadingButton from 'react-native-animate-loading-button';
 import Config from 'react-native-config';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import Entypo from 'react-native-vector-icons/Entypo';
+import {hp, wp} from '../utils/scale';
 
 export default class OrderCard extends React.Component {
   updatestatusorder = () => {
@@ -232,7 +234,7 @@ export default class OrderCard extends React.Component {
                 }}>
                 #{this.props.ID}
               </Text>
-              <View style={{flexDirection: 'row'}}>
+              {/* <View style={{flexDirection: 'row'}}>
                 <Text
                   style={{
                     fontSize: 12,
@@ -252,7 +254,7 @@ export default class OrderCard extends React.Component {
                   }}
                   source={require('../assets/left3X.png')}
                 />
-              </View>
+              </View> */}
               <Text
                 style={{
                   fontSize: 16,
@@ -386,7 +388,7 @@ export default class OrderCard extends React.Component {
                     flex: 1.8,
                     textAlign: 'left',
                   }}>
-                  {/* 1. {this?.props?.products[0]?.name || 'product name'} */}
+                  1. {this?.props?.products[0]?.name || '_'}
                 </Text>
                 <Text
                   style={{
@@ -394,39 +396,62 @@ export default class OrderCard extends React.Component {
                     fontFamily: 'Poppins-Bold',
                     flex: 1,
                     textAlign: 'right',
+                    color: '#000',
                   }}>
-                  {/* Total {this.props.products.length} items */}
+                  Total {this.props.products?.length || '_'}{' '}
+                  {this.props.products?.length == 1 ? 'item' : 'items'}
                 </Text>
               </View>
+              {
+                <View style={styles.productViewAllContainer}>
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      color: '#21272E',
+                      fontFamily: 'Poppins-Regular',
+                      marginBottom: 5,
+                      flex: 1.8,
+                      textAlign: 'left',
+                      opacity: this?.props?.products[1]?.name ? 1 : 0,
+                    }}>
+                    2. {this?.props?.products[1]?.name || '_'}
+                  </Text>
+                  <TouchableOpacity
+                    style={styles.viewAllBtn}
+                    onPress={() => this.props.onPress()}>
+                    <Text
+                      style={{
+                        fontSize: 12,
+                        color: '#337D3E',
+                      }}>
+                      View All
+                      {/* {this?.props?.products?.length >= 2
+                        ? 'View All'
+                        : 'View Details'} */}
+                    </Text>
+                    <Entypo
+                      name="chevron-small-right"
+                      size={wp(4)}
+                      color="#337D3E"
+                    />
+                  </TouchableOpacity>
+                </View>
+              }
             </View>
           </View>
           <KeyboardAvoidingView>
             <View
               style={{
                 flexDirection: 'row',
-                marginHorizontal: '3%',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                // borderWidth: 1,
-                // borderColor: 'red',
               }}>
               {this.props.storeType != 'default' && (
                 <>
                   {this.props.order_status_id != 1 ? (
                     <TouchableOpacity
                       onPress={() => this.acceptOrder(this.props.ID)}
-                      style={{
-                        marginTop: 10,
-                        width: 150,
-                        height: 50,
-                        // paddingVertical: '4%',
-                        backgroundColor: '#337D3E',
-                        borderRadius: 10,
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        padding: 0,
-                      }}>
+                      style={styles.commonActionButton}>
                       <Ionicons
                         name="checkmark-circle"
                         size={20}
@@ -446,27 +471,8 @@ export default class OrderCard extends React.Component {
               {this.props.storeType === 'default' && (
                 <TouchableOpacity
                   onPress={() => this.acceptOrder(this.props.ID)}
-                  style={{
-                    marginTop: 10,
-                    width: 150,
-                    height: 50,
-                    paddingTop: '4%',
-                    paddingBottom: '9%',
-                    backgroundColor: '#337D3E',
-                    borderRadius: 10,
-                    flexDirection: 'row',
-                  }}>
+                  style={styles.commonActionButton}>
                   <Ionicons name="checkmark-circle" size={20} color="white" />
-                  {/* <Image
-                    style={{
-                      width: 20,
-                      height: 20,
-                      resizeMode: 'contain',
-                      marginLeft: 35,
-                      marginBottom: 15,
-                    }}
-                    source={require('../assets/correct3x.png')}
-                  /> */}
                   <View>
                     <Text style={styles.TextStyle}> Accept </Text>
                   </View>
@@ -474,19 +480,10 @@ export default class OrderCard extends React.Component {
               )}
 
               <TouchableOpacity
-                style={{
-                  marginTop: 10,
-                  width: 150,
-                  height: 50,
-                  // paddingTop: '4%',
-                  // paddingBottom: '9%',
-                  backgroundColor: '#D65949',
-                  borderRadius: 10,
-                  marginLeft: 10,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
+                style={[
+                  styles.commonActionButton,
+                  {backgroundColor: '#D65949'},
+                ]}
                 onPress={() => this.openBottomSheetForDecline()}>
                 <Ionicons name="close-circle" size={20} color="white" />
                 <View>
@@ -804,6 +801,7 @@ export default class OrderCard extends React.Component {
                   <TextInput
                     multiline={true}
                     placeholder="Leave a comments"
+                    placeholderTextColor={'grey'}
                     underlineColorAndroid="#fff"
                     onChangeText={text => this.handleDeclineText(text)}
                     style={{
@@ -811,6 +809,7 @@ export default class OrderCard extends React.Component {
                       borderWidth: 1,
                       borderColor: 'lightgrey',
                       paddingHorizontal: 6,
+                      color: '#000',
                     }}
                     onSubmitEditing={this.onPress}
                   />
@@ -892,5 +891,31 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     fontFamily: 'Poppins-SemiBold',
     marginLeft: 5,
+  },
+  commonActionButton: {
+    marginTop: 10,
+    width: wp(44),
+    height: hp(4.5),
+    backgroundColor: '#337D3E',
+    borderRadius: wp(1.5),
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingBottom: hp(0.3),
+  },
+  productViewAllContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  viewAllBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: wp(0.5),
+    borderWidth: 1,
+    borderColor: '#D8E8EF',
+    padding: wp(1),
+    borderRadius: wp(1),
   },
 });

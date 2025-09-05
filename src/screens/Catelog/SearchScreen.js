@@ -22,7 +22,7 @@ import style from '../Home/Styles';
 
 const SearchScreen = ({navigation, route}) => {
   const [searchkey, setsearchkey] = React.useState();
-  const [searchresults, setsearchresults] = React.useState();
+  const [searchresults, setsearchresults] = React.useState([]);
   const [emptySearchResults, setEmptySearchResults] = React.useState(false);
   const [refreshing, setRefreshing] = React.useState(false);
 
@@ -49,8 +49,8 @@ const SearchScreen = ({navigation, route}) => {
   };
 
   const searchproduct = async searchkey => {
-    // setRefreshing(true);
-    setsearchresults();
+    setRefreshing(true);
+    setsearchresults([]);
     const api = new DeveloperAPIClient();
     // let search_key = searchkey;
     let UserMobile = await AsyncStorage.getItem('MobileNumber');
@@ -66,22 +66,23 @@ const SearchScreen = ({navigation, route}) => {
       limit,
       offset,
     );
+    setRefreshing(false);
     // console.log(JSON.stringify(allsearchdata.data.products), '===>');
     setsearchresults(allsearchdata?.data?.products || []);
     if (allsearchdata?.data?.success === false) {
       setEmptySearchResults(true);
       //Toast.showWithGravity("No Products Found", Toast.LONG, Toast.BOTTOM);
     }
-    if (allsearchdata.data.success == true) {
+    if (allsearchdata?.data?.success == true) {
       setEmptySearchResults(false);
     }
   };
 
   const updateSearchName = async val => {
-    setsearchresults();
+    setsearchresults([]);
     setsearchkey(val);
     if (val?.length <= 3) {
-      setsearchresults();
+      setsearchresults([]);
     }
     if (val?.length >= 3) {
       searchproduct(val);
@@ -281,7 +282,7 @@ const SearchScreen = ({navigation, route}) => {
               height: 50,
               // marginVertical: 10,
               marginHorizontal: 10,
-              marginTop: 30,
+              marginTop: 50,
             }}>
             <TouchableOpacity
               activeOpacity={0.6}
@@ -331,7 +332,7 @@ const SearchScreen = ({navigation, route}) => {
                 style={{justifyContent: 'center', alignItems: 'center'}}
                 onPress={() => {
                   setsearchkey();
-                  setsearchresults();
+                  setsearchresults([]);
                   //   setIsSearched(false);
                 }}>
                 <Image
@@ -380,6 +381,7 @@ const SearchScreen = ({navigation, route}) => {
                   textAlign: 'center',
                   justifyContent: 'center',
                   marginTop: '80%',
+                  color: '#000',
                 }}>
                 No Products Found
               </Text>

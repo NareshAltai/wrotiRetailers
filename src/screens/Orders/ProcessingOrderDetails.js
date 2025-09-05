@@ -32,6 +32,7 @@ import ImagePicker from '../../components/image';
 //import NetworkChecker from "react-native-network-checker";
 import Config from 'react-native-config';
 import CustomLoadingButton from '../../components/CustomLoadingButton';
+import {hp, wp} from '../../utils/scale';
 
 const OrdersScreen = ({navigation, route}) => {
   const {colors} = useTheme();
@@ -1661,7 +1662,8 @@ const OrdersScreen = ({navigation, route}) => {
 
                       <View style={{marginHorizontal: 6, marginVertical: 2}}>
                         <TextInput
-                          placeholder="Leave  comment"
+                          placeholder="Write a message to the customer"
+                          placeholderTextColor={'#9BA0A7'}
                           value={comment}
                           underlineColorAndroupdatestatusordeid="#fff"
                           onChangeText={val => setComments(val)}
@@ -1671,6 +1673,7 @@ const OrdersScreen = ({navigation, route}) => {
                             borderColor: 'lightgrey',
                             paddingHorizontal: 6,
                             fontFamily: 'Poppins-Medium',
+                            color: '#000',
                           }}
                           onSubmitEditing={() => onpress()}
                         />
@@ -1768,7 +1771,8 @@ const OrdersScreen = ({navigation, route}) => {
                 <View style={{marginHorizontal: 4, marginVertical: 10}}>
                   <TextInput
                     // multiline={true}
-                    placeholder="Leave a comment"
+                    placeholder="Write a message to the customer"
+                    placeholderTextColor={'#9BA0A7'}
                     value={CancelComment}
                     underlineColorAndroid="#fff"
                     onChangeText={val => setCancelComments(val)}
@@ -1777,6 +1781,7 @@ const OrdersScreen = ({navigation, route}) => {
                       borderWidth: 1,
                       borderColor: 'lightgrey',
                       paddingHorizontal: 6,
+                      color: '#000',
                     }}
                     onSubmitEditing={() => onpress()}
                   />
@@ -1845,14 +1850,14 @@ const styles = StyleSheet.create({
 
   SubmitButtonStyle: {
     marginTop: 10,
-    width: '100%',
-    height: 45,
-    paddingTop: 11,
-    paddingBottom: 15,
     backgroundColor: '#51AF5E',
     borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: wp(5),
+    alignSelf: 'center',
+    width: wp(96),
+    height: hp(5),
   },
 
   headerTitle: {
@@ -1864,7 +1869,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginHorizontal: 5,
     marginVertical: 15,
-    paddingTop: 15,
+    paddingTop: 25,
   },
   mainHeader: {
     backgroundColor: '#ffffff',

@@ -20,13 +20,14 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import DeveloperAPIClient from '../state/middlewares/DeveloperAPIClient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-simple-toast';
+import Header from '../components/Header';
 
 const CouponsScreen = ({navigation}) => {
   const theme = useTheme();
   const {colors} = useTheme();
 
   const dispatch = useDispatch();
-  const [displayCoupons, setDisplayCoupons] = React.useState();
+  const [displayCoupons, setDisplayCoupons] = React.useState([]);
   const [isLoadMore, setIsLoadMore] = React.useState(true);
   const couponsData = useSelector(state => state.coupons.loadCoupons);
   const couponsCount = useSelector(state => state.coupons.total);
@@ -50,7 +51,7 @@ const CouponsScreen = ({navigation}) => {
     // let search_key = ''
     let Currency_Code = await AsyncStorage.getItem('Currency_Code');
     setCurrencyCode(Currency_Code);
-    setDisplayCoupons();
+    setDisplayCoupons([]);
     setRefreshing(true);
     dispatch(couponActions.refreshCouponData());
     dispatch(couponActions.loadCoupons(currentPage, search_key));
@@ -66,11 +67,13 @@ const CouponsScreen = ({navigation}) => {
       } else {
         setIsLoadMore(true);
       }
+      setRefreshing(true);
       if (displayCoupons && currentPage > 1) {
         setDisplayCoupons([...displayCoupons, ...couponsData]);
       } else {
         setDisplayCoupons(couponsData);
       }
+      setRefreshing(false);
     }
   }, [couponsData]);
 
@@ -84,7 +87,9 @@ const CouponsScreen = ({navigation}) => {
 
   const _handleLoadMore = async () => {
     if (isLoadMore) {
+      setRefreshing(true);
       dispatch(couponActions.loadCoupons(currentPage + 1));
+      setRefreshing(false);
       setCurrentPage(currentPage + 1);
     }
   };
@@ -104,7 +109,7 @@ const CouponsScreen = ({navigation}) => {
       deletedData != undefined &&
       deletedData.data.success == true
     ) {
-      setDisplayCoupons();
+      setDisplayCoupons([]);
       // loadCoupons();
       searchCoupon(searchKey);
       Toast.showWithGravity('Coupon Deleted !', Toast.LONG, Toast.BOTTOM);
@@ -716,46 +721,24 @@ const CouponsScreen = ({navigation}) => {
         backgroundColor="#F4F5F7"
         barStyle={theme.dark ? 'light-content' : 'dark-content'}
       />
-      <View
-        style={{
-          flexDirection: 'row',
-          marginHorizontal: 5,
-          marginVertical: 15,
-          paddingTop: 15,
-        }}>
-        <TouchableOpacity
-          activeOpacity={0.6}
-          onPress={() => navigation.goBack()}>
-          <Image
-            style={{width: 28, height: 28, resizeMode: 'center'}}
-            source={require('../assets/back3x.png')}
-          />
-        </TouchableOpacity>
-        <View style={{marginLeft: 1}}>
-          <Text
-            style={{
-              color: '#2B2520',
-              fontFamily: 'Poppins-Medium',
-              fontSize: 20,
-            }}>
-            Coupons{' '}
-          </Text>
-        </View>
-        <TouchableOpacity
-          onPress={() => navigation.navigate('AddCouponsScreen')}
-          style={{marginLeft: 'auto', marginRight: '2%', marginTop: '2%'}}>
-          <Text
-            style={{
-              color: '#2F6E8F',
-              fontFamily: 'Poppins-Medium',
-              fontSize: 15,
-              textAlign: 'right',
-            }}>
-            Add Coupon
-          </Text>
-        </TouchableOpacity>
-      </View>
-      <Divider />
+      <Header
+        title={'Coupons'}
+        rightContent={
+          <TouchableOpacity
+            onPress={() => navigation.navigate('AddCouponsScreen')}
+            style={{marginLeft: 'auto', marginRight: '2%', marginTop: '2%'}}>
+            <Text
+              style={{
+                color: '#2F6E8F',
+                fontFamily: 'Poppins-Medium',
+                fontSize: 15,
+                textAlign: 'right',
+              }}>
+              Add Coupon
+            </Text>
+          </TouchableOpacity>
+        }
+      />
 
       <View
         style={{
@@ -805,7 +788,7 @@ const CouponsScreen = ({navigation}) => {
           />
         </TouchableOpacity>
       </View>
-
+      {console.log('refreshing', refreshing)}
       {refreshing && <ActivityIndicator size="large" color="#51AF5E" />}
       <View style={{marginBottom: 113}}>
         {isCouponSearched ? (
@@ -828,6 +811,7 @@ const CouponsScreen = ({navigation}) => {
                   textAlign: 'center',
                   justifyContent: 'center',
                   marginTop: '60%',
+                  color: '#000',
                 }}>
                 No Coupons Found
               </Text>
@@ -839,6 +823,7 @@ const CouponsScreen = ({navigation}) => {
               textAlign: 'center',
               justifyContent: 'center',
               marginTop: '60%',
+              color: '#000',
             }}>
             There are no coupons to display
           </Text>

@@ -31,6 +31,7 @@ import moment from 'moment';
 //import NetworkChecker from "react-native-network-checker";
 import Config from 'react-native-config';
 import CustomLoadingButton from '../../components/CustomLoadingButton';
+import {hp, wp} from '../../utils/scale';
 
 const OrdersScreen = ({navigation, route}) => {
   const [refreshing, setRefreshing] = React.useState(true);
@@ -217,7 +218,7 @@ const OrdersScreen = ({navigation, route}) => {
     let LOC = allOrdersData.data.orders.order_info.shipping_custom_field;
 
     if (LOC != false) {
-      const gps = LOC.location.split(',');
+      const gps = LOC?.location?.split(',');
       setlocation(gps);
     }
     setOrderHistory(allOrdersData.data.orders.historiesdata);
@@ -977,7 +978,10 @@ const OrdersScreen = ({navigation, route}) => {
                     </Text>
                   </TouchableOpacity>
                   <TouchableOpacity
-                    style={styles.SubmitButtonStyles}
+                    style={[
+                      styles.SubmitButtonStyle,
+                      {backgroundColor: '#F7F7FC'},
+                    ]}
                     onPress={() => cancel.RBSheetLogout.open()}>
                     <Text
                       style={{
@@ -1184,6 +1188,7 @@ const OrdersScreen = ({navigation, route}) => {
                   <TextInput
                     multiline={true}
                     placeholder="Leave a comment"
+                    placeholderTextColor={'grey'}
                     value={comment}
                     underlineColorAndroid="#fff"
                     onChangeText={val => setComments(val)}
@@ -1192,6 +1197,7 @@ const OrdersScreen = ({navigation, route}) => {
                       borderWidth: 1,
                       borderColor: 'lightgrey',
                       paddingHorizontal: 6,
+                      color: '#000',
                     }}
                     onSubmitEditing={() => onSubmit()}
                   />
@@ -1285,6 +1291,7 @@ const OrdersScreen = ({navigation, route}) => {
                   <TextInput
                     multiline={true}
                     placeholder="Leave a comment"
+                    placeholderTextColor={'grey'}
                     // value={comment}
                     underlineColorAndroid="#fff"
                     onChangeText={val => setDeclineComment(val)}
@@ -1293,6 +1300,7 @@ const OrdersScreen = ({navigation, route}) => {
                       borderWidth: 1,
                       borderColor: 'lightgrey',
                       paddingHorizontal: 6,
+                      color: '#000',
                     }}
                     onSubmitEditing={() => ondismiss()}
                   />
@@ -1358,17 +1366,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#F7F7FC',
     borderRadius: 10,
   },
-
   SubmitButtonStyle: {
     marginTop: 10,
-    width: '100%',
-    height: 45,
-    paddingTop: 11,
-    paddingBottom: 15,
     backgroundColor: '#51AF5E',
     borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: wp(5),
+    alignSelf: 'center',
+    width: wp(96),
+    height: hp(5),
   },
 
   headerTitle: {
@@ -1380,7 +1387,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginHorizontal: 5,
     marginVertical: 15,
-    paddingTop: 15,
+    paddingTop: 25,
   },
   mainHeader: {
     backgroundColor: '#ffffff',

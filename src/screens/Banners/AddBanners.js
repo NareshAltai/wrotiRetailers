@@ -27,6 +27,7 @@ import Toast from 'react-native-simple-toast';
 import ImageUpload from '../../components/ImageUpload';
 import {ScrollView} from 'react-native-gesture-handler';
 import {useIsFocused} from '@react-navigation/native';
+import Header from '../../components/Header';
 
 const AddBanners = ({navigation, route}) => {
   const theme = useTheme();
@@ -204,37 +205,7 @@ const AddBanners = ({navigation, route}) => {
         backgroundColor="#F4F5F7"
         barStyle={theme.dark ? 'light-content' : 'dark-content'}
       />
-      <View
-        style={{
-          flexDirection: 'row',
-          paddingHorizontal: 8,
-          paddingVertical: 16,
-          backgroundColor: 'white',
-          elevation: 10,
-          shadowColor: '#040D1C14',
-          borderBottomWidth: 0.4,
-          borderBottomColor: '#21272E14',
-          marginTop: 10,
-        }}>
-        <TouchableOpacity
-          activeOpacity={0.6}
-          onPress={() => navigation.goBack()}>
-          <Image
-            style={{width: 28, height: 28, resizeMode: 'center'}}
-            source={require('../../assets/back3x.png')}
-          />
-        </TouchableOpacity>
-        <View style={{marginLeft: 1}}>
-          <Text
-            style={{
-              color: '#2B2520',
-              fontFamily: 'Poppins-Medium',
-              fontSize: 18,
-            }}>
-            {isEdited == true ? 'Update Banner' : 'Add Banner'}
-          </Text>
-        </View>
-      </View>
+      <Header title={isEdited == true ? 'Update Banner' : 'Add Banner'} />
 
       <ScrollView>
         <View>

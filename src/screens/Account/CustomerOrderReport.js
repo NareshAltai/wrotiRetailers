@@ -198,7 +198,6 @@ const CustomerOrderReport = ({navigation, title}) => {
     }
 
     try {
-      // Prepare CSV
       const header = `Customer,Orders,Products,Total\n`;
       const content = totalSales
         ?.map(
@@ -206,20 +205,49 @@ const CustomerOrderReport = ({navigation, title}) => {
             `${item.customer},${item.orders},${item.products},"${item.total}"\n`,
         )
         .join('');
-
       const fileContent = header + content;
 
-      const downloads = RNBlobUtil.fs.dirs.DownloadDir;
       const timestamp = new Date().toISOString().replace(/[:.-]/g, '');
-      const filePath = `${downloads}/customer_reports_${timestamp}.csv`;
+      const fileName = `customer_reports_${timestamp}.csv`;
+      const filePath = `${RNBlobUtil.fs.dirs.DownloadDir}/${fileName}`;
 
-      // ✅ Save directly
+      // ✅ 1. Write the file
       await RNBlobUtil.fs.writeFile(filePath, fileContent, 'utf8');
-      console.log('filePath', filePath);
 
-      Alert.alert('Success', `File saved at:\n${filePath}`);
-    } catch (error) {
-      console.error('Error saving file:', error);
+      // ✅ 2. Register with DownloadManager
+      RNBlobUtil.android.addCompleteDownload({
+        title: fileName,
+        description: 'Customer report CSV',
+        mime: 'text/csv',
+        path: filePath,
+        showNotification: true,
+        scannable: true,
+      });
+
+      console.log('Saved to Downloads:', filePath);
+
+      // ✅ 3. Show Alert with "Open" option
+      Alert.alert(
+        'Success',
+        `File saved in Downloads:\n${fileName}`,
+        [
+          {text: 'OK'},
+          {
+            text: 'Open File',
+            onPress: () => {
+              try {
+                RNBlobUtil.android.actionViewIntent(filePath, 'text/csv');
+              } catch (e) {
+                console.log('Error opening file:', e);
+                Alert.alert('Error', 'Could not open the file');
+              }
+            },
+          },
+        ],
+        {cancelable: true},
+      );
+    } catch (err) {
+      console.error('Error saving file:', err);
       Alert.alert('Error', 'Failed to save file');
     }
   };
@@ -548,28 +576,26 @@ const CustomerOrderReport = ({navigation, title}) => {
         onCancel={() => setOpenEndDate(false)}
       />
 
-      <ScrollView>
-        {initialLoading ? (
-          <ActivityIndicator size="large" color="green" />
-        ) : totalSales?.length === 0 ? (
-          <Text style={{textAlign: 'center', margin: 20, color: '#000'}}>
-            No sales report to display
-          </Text>
-        ) : (
-          <FlatList
-            data={totalSales}
-            renderItem={renderItem}
-            keyExtractor={item => item.id}
-            onEndReached={loadMoreData}
-            onEndReachedThreshold={0.5}
-            ListFooterComponent={
-              loading && page > 1 ? (
-                <ActivityIndicator size="small" color="green" />
-              ) : null
-            }
-          />
-        )}
-      </ScrollView>
+      {initialLoading ? (
+        <ActivityIndicator size="large" color="green" />
+      ) : totalSales?.length === 0 ? (
+        <Text style={{textAlign: 'center', margin: 20, color: '#000'}}>
+          No sales report to display
+        </Text>
+      ) : (
+        <FlatList
+          data={totalSales}
+          renderItem={renderItem}
+          keyExtractor={item => item.id}
+          onEndReached={loadMoreData}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={
+            loading && page > 1 ? (
+              <ActivityIndicator size="small" color="green" />
+            ) : null
+          }
+        />
+      )}
       {/* </View> */}
 
       {/* download report button */}

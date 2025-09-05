@@ -201,7 +201,7 @@ const App = () => {
 
   const getFcmToken = async () => {
     const fcmToken = await messaging().getToken();
-    console.log('O====================> ~ getFcmToken ~ fcmToken:', fcmToken);
+    // console.log('O====================> ~ getFcmToken ~ fcmToken:', fcmToken);
   };
 
   const requestNotificationPermission = async () => {

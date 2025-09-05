@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   View,
   Text,
@@ -28,6 +28,8 @@ import moment from 'moment';
 //import NetworkChecker from "react-native-network-checker";
 import Toast from 'react-native-simple-toast';
 import Config from 'react-native-config';
+import CustomLoadingButton from '../../components/CustomLoadingButton';
+import {hp, wp} from '../../utils/scale';
 
 const OrdersScreen = ({navigation, route}) => {
   const {colors} = useTheme();
@@ -44,6 +46,7 @@ const OrdersScreen = ({navigation, route}) => {
   const [deliveryDetails, setDeliveryDetails] = React.useState();
   const [price, setprice] = React.useState();
   const [customizedModal, setCustomizedModal] = React.useState(true);
+  const [comments, setComments] = useState('');
 
   const theme = useTheme();
   const [data, setData] = React.useState({
@@ -53,6 +56,8 @@ const OrdersScreen = ({navigation, route}) => {
   const [datas, setDataa] = React.useState({
     EDIT: {},
   });
+  const rbSheetRef = useRef();
+  const animatedButtonRef = useRef();
 
   const dialCall = number => {
     let phoneNumber = '';
@@ -185,28 +190,6 @@ const OrdersScreen = ({navigation, route}) => {
     orderdetails();
     previousordercount();
   }, []);
-  // const openwhatsapp = () => {
-  //   let productName = '';
-  //   for (let index = 0; index < ordersData.orders.products.length; index++) {
-  //     const element = ordersData.orders.products[index];
-  //     //console.log("element",element)
-  //     productName = productName + '\r\n' + element.name;
-  //   }
-  //   //console.log("productname",productName)
-  //   let whatsappText =
-  //     `OrderId:${ordersData.orders.order_info.order_id}` +
-  //     `\r\nLocation:https://www.google.com/maps/place/${location[0]},${location[1]}` +
-  //     `\r\nCustomer Name : ${ordersData.orders.order_info.firstname}` +
-  //     `\r\nCustomer  Mobile : ${ordersData.orders.order_info.telephone}` +
-  //     `\r\nOrder Total : ${price}` +
-  //     `\r\nDate Added : ${moment
-  //       .utc(ordersData.orders.order_info.date_added)
-  //       .local()
-  //       .format('DD-MMM-YYYY, hh:mm')}` +
-  //     `\r\nProducts :${productName}` +
-  //     `\r\nPayment Mode : ${ordersData.orders.order_info.payment_method}`;
-  //   Linking.openURL(`whatsapp://send?text=${whatsappText}`);
-  // };
 
   const openwhatsapp = () => {
     if (
@@ -248,6 +231,56 @@ const OrdersScreen = ({navigation, route}) => {
     Linking.openURL(url).catch(() => {
       Alert.alert('Error', 'WhatsApp is not installed or cannot be opened.');
     });
+  };
+  const updatestatusorder = async (
+    order_id,
+    status_id,
+    text,
+    customer_mobile,
+    deliveryBoyId,
+    deliveryType,
+  ) => {
+    Toast.showWithGravity(
+      'Please wait while order status been updating',
+      Toast.LONG,
+      Toast.BOTTOM,
+    );
+    const api = new DeveloperAPIClient();
+    let Token = await AsyncStorage.getItem('token');
+    let UserMobile = await AsyncStorage.getItem('MobileNumber');
+    let statusdata = await api.getorderupdate(
+      UserMobile,
+      order_id,
+      status_id,
+      text,
+      customer_mobile,
+      deliveryBoyId,
+      deliveryType,
+    );
+    // console.log('statusdata---mine--->', statusdata);
+    let merchantInfo = await api.getMerchantInfo(UserMobile, Token);
+    if (statusdata?.code == 500) {
+      Toast.showWithGravity(statusdata.message, Toast.LONG, Toast.BOTTOM);
+    }
+    setRefreshing(true);
+    if (merchantInfo.data.default_order_status_id) {
+      await AsyncStorage.setItem(
+        'order_status_id',
+        merchantInfo.data.default_order_status_id.toString(),
+      );
+    } else {
+      await AsyncStorage.setItem('order_status_id', '15');
+    }
+
+    if (statusdata.data != undefined) {
+      Toast.showWithGravity(
+        'Order delivered successfully',
+        Toast.LONG,
+        Toast.BOTTOM,
+      );
+    }
+    setRefreshing(false);
+    rbSheetRef.current.close();
   };
   return (
     <View style={styles.container}>
@@ -1071,12 +1104,12 @@ const OrdersScreen = ({navigation, route}) => {
                       );
                     })}
                 </View>
-                <View
-                  style={[
-                    styles.SubmitButtonStyle,
-                    {backgroundColor: isReminderActive ? '#51AF5E' : 'gray'},
-                  ]}>
+                <View>
                   <TouchableOpacity
+                    style={[
+                      styles.SubmitButtonStyles,
+                      {backgroundColor: isReminderActive ? '#51AF5E' : 'gray'},
+                    ]}
                     onPress={() => reminderButton()}
                     disabled={!isReminderActive}>
                     <Text
@@ -1090,6 +1123,22 @@ const OrdersScreen = ({navigation, route}) => {
                       }}>
                       {' '}
                       Send Reminder{' '}
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.SubmitButtonStyles}
+                    onPress={() => rbSheetRef?.current?.open()}>
+                    <Text
+                      style={{
+                        color: '#0F0F0F',
+                        textAlign: 'center',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        fontSize: 16,
+                        fontFamily: 'Poppins-Bold',
+                        elevation: 2,
+                      }}>
+                      Mark As Delivered{' '}
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -1447,6 +1496,88 @@ const OrdersScreen = ({navigation, route}) => {
                 </TouchableOpacity>
               </View>
             </RBSheet>
+            <RBSheet
+              ref={rbSheetRef}
+              height={400}
+              openDuration={250}
+              customStyles={{
+                container: {
+                  justifyContent: 'center',
+                  borderTopRightRadius: 30,
+                  borderTopLeftRadius: 30,
+                },
+              }}>
+              <Image
+                style={{
+                  width: 100,
+                  height: 100,
+                  alignSelf: 'center',
+                  resizeMode: 'stretch',
+                }}
+                source={require('../../assets/sucess3x.png')}
+              />
+              <View>
+                <Text
+                  style={{
+                    color: '#34A549',
+                    fontSize: 20,
+                    marginVertical: 10,
+                    textAlign: 'center',
+                    marginTop: 8,
+                  }}>
+                  Complete Delivery
+                </Text>
+                <Text
+                  style={{
+                    color: '#11151A',
+                    fontSize: 14,
+
+                    textAlign: 'center',
+                  }}>
+                  Happy Customer Good For Business
+                </Text>
+
+                <View style={{marginHorizontal: 4, marginVertical: 10}}>
+                  <TextInput
+                    multiline={true}
+                    placeholder="Write a message to the customer"
+                    placeholderTextColor={'grey'}
+                    value={comments}
+                    underlineColorAndroid="#fff"
+                    onChangeText={setComments}
+                    style={{
+                      height: 75,
+                      borderWidth: 1,
+                      borderColor: 'lightgrey',
+                      paddingHorizontal: 6,
+                      color: '#000',
+                    }}
+                  />
+                </View>
+                {/* <Button title="Continue" onPress={() => this.onPress()} /> */}
+                <CustomLoadingButton
+                  ref={animatedButtonRef}
+                  width={328}
+                  height={52}
+                  title="Continue"
+                  titleFontSize={18}
+                  titleFontFamily="Poppins-Bold"
+                  titleColor="#FFF"
+                  backgroundColor="#34A549"
+                  borderRadius={4}
+                  onPress={() => {
+                    updatestatusorder(
+                      ordersData.orders.order_info.order_id,
+                      '5',
+                      comments,
+                      ordersData.orders.order_info.telephone,
+                      '1',
+                      ordersData.orders.order_info.deliveryType,
+                    );
+                  }}
+                />
+              </View>
+            </RBSheet>
             <Modal
               animationType="slide"
               transparent={true}
@@ -1534,24 +1665,14 @@ const styles = StyleSheet.create({
 
   SubmitButtonStyles: {
     marginTop: 10,
-    width: '100%',
-    height: 45,
-    paddingTop: 11,
-    paddingBottom: 15,
     backgroundColor: '#F7F7FC',
     borderRadius: 10,
-  },
-
-  SubmitButtonStyle: {
-    marginTop: 10,
-    width: '100%',
-    height: 45,
-    paddingTop: 11,
-    paddingBottom: 15,
-    backgroundColor: '#51AF5E',
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: wp(5),
+    alignSelf: 'center',
+    width: wp(96),
+    height: hp(5),
   },
 
   headerTitle: {
@@ -1580,7 +1701,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginHorizontal: 5,
     marginVertical: 15,
-    paddingTop: 15,
+    paddingTop: 25,
   },
   mainHeader: {
     backgroundColor: '#ffffff',
@@ -1734,17 +1855,5 @@ const styles = StyleSheet.create({
   },
   list: {
     flex: 1,
-  },
-  SubmitButtonStyle: {
-    marginTop: 10,
-    width: '93%',
-    height: 45,
-    paddingTop: 11,
-    paddingBottom: 15,
-    backgroundColor: '#51AF5E',
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#fff',
-    alignSelf: 'center',
   },
 });
