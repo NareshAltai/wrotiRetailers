@@ -85,6 +85,9 @@ const OrdersScreen = ({navigation, route}) => {
       'allOrdersData',
       JSON.stringify(allOrdersData.data.orders.historiesdata),
     );
+    let customer_id = allOrdersData.data.orders.order_info.customer_id;
+    let ordercount = await api.getordercount(UserMobile, customer_id);
+    setRefreshing(false);
     setOrderHistory(allOrdersData.data.orders.historiesdata);
     setStoreType(store_type);
     let LOC = allOrdersData.data.orders.order_info.shipping_custom_field;
@@ -113,10 +116,10 @@ const OrdersScreen = ({navigation, route}) => {
     let allOrdersData = await api.getOrderDetails(UserMobile, orderId);
 
     let customer_id = allOrdersData.data.orders.order_info.customer_id;
-    //console.log("customerID------>", customer_id);
     let ordercount = await api.getordercount(UserMobile, customer_id);
-    // setIsLoading(false)
     setRefreshing(false);
+    //console.log("customerID------>", customer_id);
+    // setIsLoading(false)
     // console.log(
     //   "previousordercount-----------------",
     //   JSON.stringify(ordercount.data)
@@ -145,7 +148,7 @@ const OrdersScreen = ({navigation, route}) => {
   useEffect(() => {
     loadOrdersByOrderId();
     orderdetails();
-    previousordercount();
+    // previousordercount();
   }, []);
 
   const openwhatsapp = () => {
@@ -350,17 +353,17 @@ const OrdersScreen = ({navigation, route}) => {
                 </View>
                 <Divider />
                 <View style={{margin: 5}} />
-                {ordersData.orders.products &&
-                  ordersData.orders.products.map((val, i) => {
+                {ordersData?.orders?.products &&
+                  ordersData?.orders?.products?.map((val, i) => {
                     if (
-                      val.option.length > 0 &&
-                      val.option[0] != undefined &&
-                      val.option[0].type == 'file' &&
+                      val?.option?.length > 0 &&
+                      val?.option[0] != undefined &&
+                      val?.option[0]?.type == 'file' &&
                       !showDownload
                     ) {
                       setShowDownload(true);
-                      setprescriptionImageUrl(val.option[0].value);
-                      setprescriptionName(val.option[0].name);
+                      setprescriptionImageUrl(val?.option[0]?.value);
+                      setprescriptionName(val?.option[0]?.name);
                     }
                     // console.log("name###",ordersData)
                     return (
@@ -398,7 +401,7 @@ const OrdersScreen = ({navigation, route}) => {
                           {customizedModal && (
                             <>
                               {val &&
-                                val.option.map((optionValue, optionIndex) => {
+                                val?.option?.map((optionValue, optionIndex) => {
                                   return (
                                     <>
                                       {val?.option?.length > 0 && (
@@ -409,7 +412,7 @@ const OrdersScreen = ({navigation, route}) => {
                                               fontSize: 12,
                                               fontFamily: 'Poppins-Medium',
                                             }}>
-                                            {optionValue.value}
+                                            {optionValue.value || ''}
                                           </Text>
                                           {/* <View style={{justifyContent:'flex-end',alignContent:'flex-end'}}> */}
                                           <Text
@@ -419,7 +422,7 @@ const OrdersScreen = ({navigation, route}) => {
                                               fontFamily: 'Poppins-Medium',
                                               marginLeft: 10,
                                             }}>
-                                            ( ₹ {optionValue.price} )
+                                            ( ₹ {optionValue.price || 0} )
                                           </Text>
                                           {/* </View> */}
                                         </View>
@@ -462,8 +465,8 @@ const OrdersScreen = ({navigation, route}) => {
                   )}
                 </TouchableOpacity>
 
-                {ordersData.orders.totalsdata &&
-                  ordersData.orders.totalsdata.map((item, i) => {
+                {ordersData?.orders?.totalsdata &&
+                  ordersData?.orders?.totalsdata?.map((item, i) => {
                     return (
                       <View style={{flexDirection: 'row', marginTop: 5}}>
                         <Text
@@ -540,7 +543,9 @@ const OrdersScreen = ({navigation, route}) => {
                     </Text>
                     <TouchableOpacity
                       onPress={() =>
-                        dialCall(`+${ordersData.orders.order_info.telephone}`)
+                        dialCall(
+                          `+${ordersData.orders.order_info.telephone || ''}`,
+                        )
                       }>
                       <Text
                         style={{
@@ -550,7 +555,7 @@ const OrdersScreen = ({navigation, route}) => {
                           marginTop: 3,
                           fontFamily: 'Poppins-Medium',
                         }}>
-                        +{ordersData.orders.order_info.telephone}
+                        +{ordersData.orders.order_info.telephone || ''}
                       </Text>
                     </TouchableOpacity>
                     <View style={{marginTop: 4.5, marginLeft: 5}}>
@@ -561,7 +566,9 @@ const OrdersScreen = ({navigation, route}) => {
                     </View>
                     <TouchableOpacity
                       onPress={() =>
-                        whatsapp(`+${ordersData.orders.order_info.telephone}`)
+                        whatsapp(
+                          `+${ordersData.orders.order_info.telephone || ''}`,
+                        )
                       }
                       style={{
                         flex: 1,
@@ -594,7 +601,7 @@ const OrdersScreen = ({navigation, route}) => {
                       marginTop: 3,
                       fontFamily: 'Poppins-Medium',
                     }}>
-                    {ordercount}
+                    {ordercount || 0}
                   </Text>
                 </View>
                 {/* <View style={{ flexDirection: "row" }}>
@@ -657,7 +664,7 @@ const OrdersScreen = ({navigation, route}) => {
                       fontFamily: 'Poppins-Medium',
                       width: 190,
                     }}>
-                    {ordersData.orders.order_info.comment}
+                    {ordersData.orders.order_info.comment || ''}
                   </Text>
                 </View>
               </View>
@@ -830,7 +837,7 @@ const OrdersScreen = ({navigation, route}) => {
                   </Text>
                 </View>
                 {OrderHistory &&
-                  OrderHistory.map((val, i) => {
+                  OrderHistory?.map((val, i) => {
                     if (i == OrderHistory.length - 1) {
                       val.lineColor = '#FFFFFF';
                     } else {

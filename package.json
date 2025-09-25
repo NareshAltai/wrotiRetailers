@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "android:uat": "react-native run-android --mode=uatdebug --active-arch-only",
-    "productionbuild": "react-native run-android — variant=productionDebug",
+    "android:prod": "react-native run-android --mode=productiondebug --active-arch-only",
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native start",

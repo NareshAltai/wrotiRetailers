@@ -118,12 +118,17 @@ const SignInScreen = ({navigation, route}) => {
       setPassword(Password);
       console.log(UserMobile);
       const fcmToken = await messaging().getToken();
+      console.log('O====================> ~ login ~ fcmToken:', fcmToken);
       if (fcmToken) {
         await AsyncStorage.setItem('fcmToken', fcmToken);
       } else {
       }
-      let uniqueId = DeviceInfo.getUniqueId();
+      let uniqueId = await DeviceInfo.getUniqueId();
       let fctockendata = await api.FCTOKEN(UserMobile, fcmToken, uniqueId);
+      console.log(
+        'O====================> ~ login ~ fctockendata:',
+        fctockendata,
+      );
       let token = loginData.token;
       await AsyncStorage.setItem('token', token);
       // dispatch(orderActions.refreshOrders());

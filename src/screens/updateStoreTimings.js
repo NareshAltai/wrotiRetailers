@@ -23,6 +23,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {clone} from 'lodash';
 import Toast from 'react-native-simple-toast';
 import Header from '../components/Header';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import {wp} from '../utils/scale';
 
 const TemplateListScreen = ({navigation}) => {
   const theme = useTheme();
@@ -34,11 +36,19 @@ const TemplateListScreen = ({navigation}) => {
   const [displayStoreTimings, setDisplayStoreTimings] = React.useState();
   const [cloneObject, setCloneObject] = React.useState();
   const [index, setIndex] = React.useState();
+  const [openStartTime, setOpenStartTime] = useState(false);
+  const [openEndTime, setOpenEndTime] = useState(false);
   const isFocused = useIsFocused();
 
   useEffect(() => {
     getStoreTimings();
   }, [isFocused]);
+  function formatTimeRange(startDate) {
+    const pad = n => n.toString().padStart(2, '0');
+    const start = new Date(startDate);
+    // const end = new Date(endDate);
+    return `${pad(start.getHours())}:${pad(start.getMinutes())}}`;
+  }
 
   const getStoreTimings = async () => {
     setDisplayStoreTimings();
@@ -48,13 +58,15 @@ const TemplateListScreen = ({navigation}) => {
     let StoreTimings = await api.getStoreTimings(UserMobile, Token);
     let responseData = JSON.parse(StoreTimings.data.store_timings);
     setDisplayStoreTimings(responseData);
-    setCloneObject(responseData);
+    setCloneObject(formatTimeRange(responseData));
   };
 
   const onEditClick = (item, index) => {
-    setStartTime(new Date());
-    setEndTime(new Date());
-    setIndex(index);
+    console.log('called------------>');
+    // setOpenStartTime(true);
+    // setStartTime(new Date());
+    // setEndTime(new Date());
+    // setIndex(index);
     setSelectedItemId(selectedItemId == item.day ? '' : item.day);
   };
 
@@ -83,6 +95,13 @@ const TemplateListScreen = ({navigation}) => {
       localObject[index].time = item.time.split('-')[0] + '-' + val;
       setEndTime(val);
     }
+  };
+  const formatTo12HourTimeString = (date: Date) => {
+    return date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    });
   };
 
   const updateNewStoreTimings = async () => {
@@ -149,32 +168,109 @@ const TemplateListScreen = ({navigation}) => {
           </View>
           {selectedItemId === item.day ? (
             <View style={{flexDirection: 'column'}}>
-              <View style={{flexDirection: 'row', marginTop: 5}}>
-                <DatePicker
-                  style={{width: '42%'}}
-                  date={startTime == '' ? item.time.split('-')[0] : startTime}
-                  mode="time"
-                  placeholder="Select Time"
-                  confirmBtnText="Confirm"
-                  cancelBtnText="Cancel"
-                  onDateChange={val => {
-                    updateStoreStartTimings(item, val, index);
-                  }}
-                  showIcon={false}
-                />
-                <Text style={{margin: 10, color: '#000'}}>:</Text>
-                <DatePicker
-                  style={{width: '42%'}}
-                  date={endTime == '' ? item.time.split('-')[1] : endTime}
-                  mode="time"
-                  placeholder="Select Time"
-                  confirmBtnText="Confirm"
-                  cancelBtnText="Cancel"
-                  onDateChange={val => {
-                    updateStoreEndTimings(item, val, index);
-                  }}
-                  showIcon={false}
-                />
+              <View
+                style={{
+                  flexDirection: 'row',
+                  marginTop: 5,
+                  alignItems: 'center',
+                  width: '100%',
+                  justifyContent: 'space-between',
+                }}>
+                <View
+                  style={{
+                    marginTop: 10,
+                    alignItems: 'center',
+                  }}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setOpenStartTime(true);
+                      console.log('nice raa -------------->');
+                    }}
+                    style={{
+                      borderWidth: 1,
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      width: wp(25),
+                    }}>
+                    <Text
+                      style={{
+                        // marginLeft: 12,
+                        fontFamily: 'Poppins-Medium',
+                        marginTop: '3%',
+                        color: '#000',
+                      }}>
+                      Start Time
+                    </Text>
+
+                    <Ionicons
+                      name="calendar-outline"
+                      size={20}
+                      color={'#000'}
+                    />
+                    {/* <Image source={require('../assets/calendar.png')} /> */}
+
+                    {/* Show selected start date */}
+                  </TouchableOpacity>
+                  <Text
+                    style={{
+                      // marginLeft: 8,
+                      fontFamily: 'Poppins-Regular',
+                      color: '#333',
+                    }}>
+                    {' '}
+                    {formatTo12HourTimeString(new Date(startTime))}
+                    {/* {startTime || '--'} */}
+                  </Text>
+                </View>
+                {/* <Text style={{margin: 10, color: '#000'}}>:</Text> */}
+                <View
+                  style={{
+                    marginTop: 10,
+                    // flexDirection: 'row',
+                    alignItems: 'center',
+                  }}>
+                  <TouchableOpacity
+                    onPress={() => setOpenEndTime(true)}
+                    style={{
+                      borderWidth: 1,
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      width: wp(25),
+                    }}>
+                    <Text
+                      style={{
+                        // marginLeft: 12,
+                        fontFamily: 'Poppins-Medium',
+                        marginTop: '3%',
+                        color: '#000',
+                      }}>
+                      End Time
+                    </Text>
+                    <TouchableOpacity
+                      onPress={() => setOpenEndTime(true)}
+                      style={{marginLeft: 8}}>
+                      <Ionicons
+                        name="calendar-outline"
+                        size={20}
+                        color={'#000'}
+                      />
+                      {/* <Image source={require('../assets/calendar.png')} /> */}
+                    </TouchableOpacity>
+                    {/* Show selected start date */}
+                  </TouchableOpacity>
+                  <Text
+                    style={{
+                      // marginLeft: 8,
+                      fontFamily: 'Poppins-Regular',
+                      color: '#333',
+                    }}>
+                    {' '}
+                    {formatTo12HourTimeString(new Date(endTime))}
+                    {/* {startTime || '--'} */}
+                  </Text>
+                </View>
               </View>
               <TouchableOpacity
                 style={{
@@ -227,7 +323,36 @@ const TemplateListScreen = ({navigation}) => {
         backgroundColor="#F4F5F7"
         barStyle={theme.dark ? 'light-content' : 'dark-content'}
       />
+
       <Header title={'Outlet Open / Close Timings'} />
+      <DatePicker
+        modal
+        open={openStartTime}
+        date={startTime}
+        mode="time"
+        // minimumDate={moment().tot}
+        onConfirm={val => {
+          setOpenStartTime(false);
+          setStartTime(val);
+        }}
+        onCancel={() => {
+          setOpenStartTime(false);
+        }}
+      />
+      <DatePicker
+        modal
+        open={openEndTime}
+        date={endTime}
+        mode="time"
+        // minimumDate={moment().tot}
+        onConfirm={val => {
+          setOpenEndTime(false);
+          setEndTime(val);
+        }}
+        onCancel={() => {
+          setOpenEndTime(false);
+        }}
+      />
       <View style={{marginBottom: 40}}>
         <FlatList
           data={displayStoreTimings}

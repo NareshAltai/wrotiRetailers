@@ -77,13 +77,21 @@ const OrdersScreen = ({navigation, route}) => {
   const orderdetails = async () => {
     const api = new DeveloperAPIClient();
     let orderId = route.params.ID;
-    let orders = route.params.orders;
+    // let orders = route.params.orders;
     let UserMobile = await AsyncStorage.getItem('MobileNumber');
     let store_type = await AsyncStorage.getItem('store_type');
     let allOrdersData = await api.getOrderDetails(UserMobile, orderId);
-    setOrderHistory(allOrdersData.data.orders.historiesdata);
+    setOrderHistory(allOrdersData?.data?.orders?.historiesdata || []);
+    let customer_id =
+      allOrdersData?.data?.orders?.order_info?.customer_id || '';
+    //console.log("customerID------>", customer_id);
+
+    let ordercount = await api.getordercount(UserMobile, customer_id);
+    setIsordercount(ordercount.data.count);
+    setRefreshing(false);
     setStoreType(store_type);
-    let LOC = allOrdersData.data.orders.order_info.shipping_custom_field;
+    let LOC =
+      allOrdersData?.data?.orders?.order_info?.shipping_custom_field || false;
 
     //console.log("LOC+", LOC);
     if (LOC != false) {
@@ -91,16 +99,16 @@ const OrdersScreen = ({navigation, route}) => {
       setlocation(gps);
     }
     //console.log("allordersdetails######", JSON.stringify(allOrdersData.data));
-    setOrdersData(allOrdersData.data);
-    for (let i = 0; i < allOrdersData.data.orders.totals.length; i++) {
-      if (allOrdersData.data.orders.totals[i].title == 'Total') {
-        setprice(allOrdersData.data.orders.totals[i].value);
+    setOrdersData(allOrdersData?.data);
+    for (let i = 0; i < allOrdersData?.data?.orders?.totals?.length; i++) {
+      if (allOrdersData?.data?.orders?.totals[i]?.title == 'Total') {
+        setprice(allOrdersData?.data?.orders?.totals[i]?.value);
       }
     }
   };
 
   const previousordercount = async () => {
-    orderdetails();
+    // orderdetails();
     // setIsLoading(true)
     setRefreshing(true);
     // console.log("hiii")
@@ -109,17 +117,18 @@ const OrdersScreen = ({navigation, route}) => {
     let UserMobile = await AsyncStorage.getItem('MobileNumber');
     let allOrdersData = await api.getOrderDetails(UserMobile, orderId);
 
-    let customer_id = allOrdersData.data.orders.order_info.customer_id;
+    let customer_id =
+      allOrdersData?.data?.orders?.order_info?.customer_id || '';
     //console.log("customerID------>", customer_id);
 
     let ordercount = await api.getordercount(UserMobile, customer_id);
+    setIsordercount(ordercount.data.count);
     // setIsLoading(false)
     setRefreshing(false);
     // console.log(
     //   "previousordercount-----------------",
     //   JSON.stringify(ordercount.data)
     // );
-    setIsordercount(ordercount.data.count);
   };
 
   const loadOrdersByOrderId = async () => {
@@ -144,7 +153,7 @@ const OrdersScreen = ({navigation, route}) => {
   useEffect(() => {
     orderdetails();
     loadOrdersByOrderId();
-    previousordercount();
+    // previousordercount();
   }, []);
   const openwhatsapp = () => {
     let productName = '';
@@ -362,17 +371,17 @@ const OrdersScreen = ({navigation, route}) => {
                   marginVertical: 5,
                 }}>
                 <View style={{margin: 5}} />
-                {ordersData.orders.products &&
-                  ordersData.orders.products.map((val, i) => {
+                {ordersData?.orders?.products &&
+                  ordersData?.orders?.products?.map((val, i) => {
                     if (
-                      val.option.length > 0 &&
-                      val.option[0] != undefined &&
-                      val.option[0].type == 'file' &&
+                      val?.option?.length > 0 &&
+                      val?.option[0] != undefined &&
+                      val?.option[0]?.type == 'file' &&
                       !showDownload
                     ) {
                       setShowDownload(true);
-                      setprescriptionImageUrl(val.option[0].value);
-                      setprescriptionName(val.option[0].name);
+                      setprescriptionImageUrl(val?.option[0]?.value);
+                      setprescriptionName(val?.option[0]?.name);
                     }
                     // console.log("name###",ordersData)
                     return (
@@ -401,7 +410,7 @@ const OrdersScreen = ({navigation, route}) => {
                                   textDecorationColor: 'green',
                                   textDecorationLine: 'underline',
                                 }}>
-                                {val.name} ...
+                                {val.name || ''} ...
                               </Text>
                             ) : (
                               `${val.name}`
@@ -410,7 +419,7 @@ const OrdersScreen = ({navigation, route}) => {
                           {customizedModal && (
                             <>
                               {val &&
-                                val.option.map((optionValue, optionIndex) => {
+                                val?.option?.map((optionValue, optionIndex) => {
                                   return (
                                     <>
                                       {val?.option?.length > 0 && (
@@ -431,7 +440,7 @@ const OrdersScreen = ({navigation, route}) => {
                                               fontFamily: 'Poppins-Medium',
                                               marginLeft: 10,
                                             }}>
-                                            ( ₹ {optionValue.price} )
+                                            ( ₹ {optionValue.price || 0} )
                                           </Text>
                                           {/* </View> */}
                                         </View>
@@ -449,7 +458,7 @@ const OrdersScreen = ({navigation, route}) => {
                             fontFamily: 'Poppins-Medium',
                             marginLeft: 'auto',
                           }}>
-                          {val.quantity} x {val.price}
+                          {val.quantity || 0} x {val.price || 0}
                         </Text>
                       </View>
                     );

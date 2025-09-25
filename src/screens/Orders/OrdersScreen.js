@@ -114,36 +114,36 @@ const OrdersScreen = ({navigation, route}) => {
     parseInt(authorizedCount) +
     parseInt(newOrdersCount) +
     parseInt(paymentReceivedCount);
-
+  console.log('storetype----------->', storeType, paymentReceivedCount);
   const MainTab = {
     'Active Orders': {
       'New\r\nOrders':
-        storeType === 'nexus'
+        storeType === 'nexus' || storeType === 'forum'
           ? {
               order_status_id: 20,
               image: newbox3x,
-              count: paymentReceivedCount ? paymentReceivedCount : 0,
+              count: paymentReceivedCount ? paymentReceivedCount : '0',
             }
           : {
               order_status_id: [1, 19, 20],
               image: newbox3x,
-              count: newDefaultOrderCount ? newDefaultOrderCount : 0,
+              count: newDefaultOrderCount ? newDefaultOrderCount : '0',
             },
       'Processing\r\nOrders': {
         order_status_id: 2,
         image: processing3x,
-        count: processingOrdersCount,
+        count: processingOrdersCount || '0',
       },
       'Out for\r\nDelivery': {
         order_status_id: 15,
         image: scooter3x,
-        count: outForDeliveryOrdersCount,
+        count: outForDeliveryOrdersCount || '0',
       },
     },
     'Previous Orders': {
-      Delivered: {order_status_id: 5, count: deliveredOrdersCount},
-      Rejected: {order_status_id: 17, count: rejectedOrdersCount},
-      Cancelled: {order_status_id: 7, count: cancelledOrdersCount},
+      Delivered: {order_status_id: 5, count: deliveredOrdersCount || '0'},
+      Rejected: {order_status_id: 17, count: rejectedOrdersCount || '0'},
+      Cancelled: {order_status_id: 7, count: cancelledOrdersCount || '0'},
     },
   };
   // console.log("newcount00000000",newcount)
@@ -470,7 +470,7 @@ const OrdersScreen = ({navigation, route}) => {
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      OrderStats();
+      // OrderStats();
 
       if (!newOrderFlag) {
         deliveryPartnersList();
@@ -645,7 +645,8 @@ const OrdersScreen = ({navigation, route}) => {
                         sub_tab_Key === val ? '#51AF5E' : '#F2F7F9',
                       padding: 5,
                       width: '32%',
-                      aspectRatio: 1,
+                      height: 'auto',
+                      // aspectRatio: 1,
                       borderRadius: 5,
                       borderColor: sub_tab_Key === val ? '#337D3E' : '#F2F7F9',
                     }}>

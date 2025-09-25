@@ -88,13 +88,13 @@ const PaymentStatusScreen = ({navigation}) => {
       merchantMobile,
       Token,
       mobile,
-      10,
+      5,
       1,
     );
     // console.log('allOrdersData--------', allOrdersData.data);
     if (allOrdersData?.data?.success) {
       // Set only the first five orders from the response
-      setSearchData(allOrdersData.data.orders.slice(0, 5));
+      setSearchData(allOrdersData.data.orders);
       setIsLoader(false);
       setIsDataLoading(false);
     } else {

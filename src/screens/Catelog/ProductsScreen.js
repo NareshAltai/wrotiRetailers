@@ -36,7 +36,7 @@ import {
   responsiveHeight,
   responsiveWidth,
 } from 'react-native-responsive-dimensions';
-import {wp} from '../../utils/scale';
+import {hp, wp} from '../../utils/scale';
 
 const ProductScreen = ({navigation}) => {
   const dispatch = useDispatch();
@@ -102,7 +102,7 @@ const ProductScreen = ({navigation}) => {
     },
   };
 
-  const loadproducts = async (category_id, currentPage) => {
+  const loadproducts = async (category_id, currentPage = 1) => {
     setIsLoading(true);
     setDisplayProducts();
     setRefreshing(true);
@@ -339,13 +339,13 @@ const ProductScreen = ({navigation}) => {
     setChecked(!checked);
   };
   const updatecat = async val => {
+    setCurrentPage(1);
     setIsLoading(true);
     setChecked(true);
     setDisplayProducts();
     setVisibleCats(false);
     setCats(val);
-    loadproducts(val.id, 1);
-    setCurrentPage(1);
+    loadproducts(val?.id, 1);
     setIsLoading(false);
   };
 
@@ -386,26 +386,21 @@ const ProductScreen = ({navigation}) => {
     setname(cats.category_description[val.language_id].name);
   };
 
-  const updateProductStatus = async (id, status) => {
-    setIsLoading(true);
-    setDisplayProducts();
-    // setRefreshing(true);
+  const updateProductStatus = async (item, status) => {
+    // setIsLoading(true);
+    // setDisplayProducts();
+    setRefreshing(true);
+    setDisplayProducts([]);
     const api = new DeveloperAPIClient();
     let Token = await AsyncStorage.getItem('token');
     let UserMobile = await AsyncStorage.getItem('MobileNumber');
-    let updateProductStatus = await api.getupdateProductStatus(
-      UserMobile,
-      id,
-      status,
-      Token,
-    );
-    //setRefreshing(false);
+    await api.getupdateProductStatus(UserMobile, item?.id, status, Token);
+    // setRefreshing(false);
     setCurrentPage(1);
     setIsLoadMore(true);
-    loadproducts(cats.category_id);
-    setIsLoading(false);
+    await loadproducts(item?.category_id);
+    // setIsLoading(false);
   };
-
   const [data, setData] = React.useState({
     RBSheetDeleteCategory: {},
   });
@@ -576,10 +571,7 @@ const ProductScreen = ({navigation}) => {
                   <Switch
                     value={item.status == '1' ? true : false}
                     onValueChange={() => {
-                      updateProductStatus(
-                        item.id,
-                        item.status == '1' ? '0' : '1',
-                      );
+                      updateProductStatus(item, item.status == '1' ? '0' : '1');
                     }}
                     color="#34A549"
                     marginLeft="7%"
@@ -688,10 +680,7 @@ const ProductScreen = ({navigation}) => {
                   <Switch
                     value={item.status == '1' ? true : false}
                     onValueChange={() => {
-                      updateProductStatus(
-                        item.id,
-                        item.status == '1' ? '0' : '1',
-                      );
+                      updateProductStatus(item, item.status == '1' ? '0' : '1');
                     }}
                     color="#34A549"
                     marginLeft="7%"
@@ -927,9 +916,14 @@ const ProductScreen = ({navigation}) => {
                     numColumns={1}
                     nestedScrollEnabled={true}
                     renderItem={renderItem}
-                    onEndReached={() => _handleLoadMore()}
+                    onEndReached={() => {
+                      if (cats?.category_id) {
+                        _handleLoadMore();
+                      }
+                    }}
                     onEndReachedThreshold={0.5}
-                    marginBottom={20}
+                    contentContainerStyle={{marginBottom: hp(10)}}
+                    // marginBottom={20}
                     ListEmptyComponent={
                       <Text
                         style={{
@@ -938,7 +932,7 @@ const ProductScreen = ({navigation}) => {
                           marginTop: '70%',
                           color: '#000',
                         }}>
-                        No Products Found
+                        {!refreshing ? 'Loading...' : 'No Products Found'}
                       </Text>
                     }
                   />

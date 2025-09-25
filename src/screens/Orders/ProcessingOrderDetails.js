@@ -623,17 +623,17 @@ const OrdersScreen = ({navigation, route}) => {
                     marginVertical: 5,
                   }}>
                   <View style={{margin: 5}} />
-                  {ordersData.orders.products &&
-                    ordersData.orders.products.map((val, i) => {
+                  {ordersData?.orders?.products &&
+                    ordersData?.orders?.products?.map((val, i) => {
                       if (
-                        val.option.length > 0 &&
-                        val.option[0] != undefined &&
-                        val.option[0].type == 'file' &&
+                        val?.option?.length > 0 &&
+                        val?.option[0] != undefined &&
+                        val?.option[0]?.type == 'file' &&
                         !showDownload
                       ) {
                         setShowDownload(true);
-                        setprescriptionImageUrl(val.option[0].value);
-                        setprescriptionName(val.option[0].name);
+                        setprescriptionImageUrl(val?.option[0]?.value);
+                        setprescriptionName(val?.option[0]?.name);
                       }
                       // console.log("name###",ordersData)
                       return (
@@ -671,35 +671,38 @@ const OrdersScreen = ({navigation, route}) => {
                             {customizedModal && (
                               <>
                                 {val &&
-                                  val.option.map((optionValue, optionIndex) => {
-                                    return (
-                                      <>
-                                        {val?.option?.length > 0 && (
-                                          <View style={{flexDirection: 'row'}}>
-                                            <Text
-                                              style={{
-                                                color: 'green',
-                                                fontSize: 12,
-                                                fontFamily: 'Poppins-Medium',
-                                              }}>
-                                              {optionValue.value}
-                                            </Text>
-                                            {/* <View style={{justifyContent:'flex-end',alignContent:'flex-end'}}> */}
-                                            <Text
-                                              style={{
-                                                color: 'green',
-                                                fontSize: 12,
-                                                fontFamily: 'Poppins-Medium',
-                                                marginLeft: 10,
-                                              }}>
-                                              ( ₹ {optionValue.price} )
-                                            </Text>
-                                            {/* </View> */}
-                                          </View>
-                                        )}
-                                      </>
-                                    );
-                                  })}
+                                  val?.option?.map(
+                                    (optionValue, optionIndex) => {
+                                      return (
+                                        <>
+                                          {val?.option?.length > 0 && (
+                                            <View
+                                              style={{flexDirection: 'row'}}>
+                                              <Text
+                                                style={{
+                                                  color: 'green',
+                                                  fontSize: 12,
+                                                  fontFamily: 'Poppins-Medium',
+                                                }}>
+                                                {optionValue.value | ''}
+                                              </Text>
+                                              {/* <View style={{justifyContent:'flex-end',alignContent:'flex-end'}}> */}
+                                              <Text
+                                                style={{
+                                                  color: 'green',
+                                                  fontSize: 12,
+                                                  fontFamily: 'Poppins-Medium',
+                                                  marginLeft: 10,
+                                                }}>
+                                                ( ₹ {optionValue.price || 0} )
+                                              </Text>
+                                              {/* </View> */}
+                                            </View>
+                                          )}
+                                        </>
+                                      );
+                                    },
+                                  )}
                               </>
                             )}
                           </View>
@@ -710,7 +713,7 @@ const OrdersScreen = ({navigation, route}) => {
                               fontFamily: 'Poppins-Medium',
                               marginLeft: 'auto',
                             }}>
-                            {val.quantity} x {val.price}
+                            {val.quantity || 0} x {val.price || 0}
                           </Text>
                         </View>
                       );
@@ -735,8 +738,8 @@ const OrdersScreen = ({navigation, route}) => {
                     )}
                   </TouchableOpacity>
 
-                  {ordersData.orders.totalsdata &&
-                    ordersData.orders.totalsdata.map((item, i) => {
+                  {ordersData?.orders?.totalsdata &&
+                    ordersData?.orders?.totalsdata?.map((item, i) => {
                       return (
                         <View style={{flexDirection: 'row', marginTop: 5}}>
                           <Text
@@ -748,7 +751,7 @@ const OrdersScreen = ({navigation, route}) => {
                               flex: 1,
                               textAlign: 'left',
                             }}>
-                            {item.title}
+                            {item?.title || ''}
                           </Text>
                           <Text
                             style={{
@@ -758,7 +761,7 @@ const OrdersScreen = ({navigation, route}) => {
                               flex: 1,
                               textAlign: 'right',
                             }}>
-                            {item.text}
+                            {item?.text || ''}
                           </Text>
                         </View>
                       );
@@ -795,7 +798,7 @@ const OrdersScreen = ({navigation, route}) => {
                         flexShrink: 1,
                         flexBasis: 'auto',
                       }}>
-                      {ordersData.orders.order_info.firstname}
+                      {ordersData.orders.order_info.firstname || ''}
                     </Text>
                   </View>
                   <View style={{flexDirection: 'row'}}>
@@ -811,7 +814,9 @@ const OrdersScreen = ({navigation, route}) => {
                     </Text>
                     <TouchableOpacity
                       onPress={() =>
-                        dialCall(`+${ordersData.orders.order_info.telephone}`)
+                        dialCall(
+                          `+${ordersData.orders.order_info.telephone || ''}`,
+                        )
                       }>
                       <Text
                         style={{
@@ -821,7 +826,7 @@ const OrdersScreen = ({navigation, route}) => {
                           marginTop: 3,
                           fontFamily: 'Poppins-Medium',
                         }}>
-                        +{ordersData.orders.order_info.telephone}
+                        +{ordersData.orders.order_info.telephone || ''}
                       </Text>
                     </TouchableOpacity>
                     <View style={{marginTop: 4.5, marginLeft: 5}}>
@@ -832,7 +837,9 @@ const OrdersScreen = ({navigation, route}) => {
                     </View>
                     <TouchableOpacity
                       onPress={() =>
-                        whatsapp(`+${ordersData.orders.order_info.telephone}`)
+                        whatsapp(
+                          `+${ordersData.orders.order_info.telephone || ''}`,
+                        )
                       }
                       style={{
                         flex: 1,
@@ -864,7 +871,7 @@ const OrdersScreen = ({navigation, route}) => {
                         marginTop: 3,
                         fontFamily: 'Poppins-Medium',
                       }}>
-                      {ordercount}
+                      {ordercount || 0}
                     </Text>
                   </View>
                   {/* <View style={{ flexDirection: "row" }}>
@@ -927,7 +934,7 @@ const OrdersScreen = ({navigation, route}) => {
                         fontFamily: 'Poppins-Medium',
                         width: 190,
                       }}>
-                      {ordersData.orders.order_info.comment}
+                      {ordersData.orders.order_info.comment || ''}
                     </Text>
                   </View>
                   {waitersDetails && (
@@ -954,7 +961,7 @@ const OrdersScreen = ({navigation, route}) => {
                             flexShrink: 1,
                             flexBasis: 'auto',
                           }}>
-                          {waitersDetails.waiterName}
+                          {waitersDetails.waiterName || ''}
                         </Text>
                       </View>
                       <View style={{flexDirection: 'row'}}>
@@ -979,7 +986,7 @@ const OrdersScreen = ({navigation, route}) => {
                             flexShrink: 1,
                             flexBasis: 'auto',
                           }}>
-                          {waitersDetails.waiterMobileNumber}
+                          {waitersDetails.waiterMobileNumber || ''}
                         </Text>
                       </View>
                     </>
@@ -1017,7 +1024,7 @@ const OrdersScreen = ({navigation, route}) => {
                         flexShrink: 1,
                         flexBasis: 'auto',
                       }}>
-                      {route.params.item.shipping_address}
+                      {route.params.item.shipping_address || ''}
                     </Text>
                   </View>
                 </View>

@@ -655,6 +655,11 @@ export default class DeveloperAPIClient extends RestClient {
       fcmToken: fcmToken,
       deviceId: uniqueId,
     };
+    console.log(
+      'O====================> ~ DeveloperAPIClient ~ inputData:',
+      inputData,
+      url,
+    );
     let apiResponse = await Api.post(url, inputData, '', '', {
       'Content-Type': 'application/json',
     });
@@ -758,7 +763,10 @@ export default class DeveloperAPIClient extends RestClient {
         'Content-Type': 'application/json',
       },
     );
-    console.log('response--->orderhistory', apiResponse.data);
+    // console.log('response--->orderhistory', apiResponse.data, url, {
+    //   mobileNumber: UserMobile,
+    //   customer_id,
+    // });
     return apiResponse.data;
   };
 
@@ -777,7 +785,7 @@ export default class DeveloperAPIClient extends RestClient {
     let apiResponse = await Api.post(url, payLoad, '', '', {
       'Content-Type': 'application/json',
     });
-    // console.log("Payload ,", payLoad, url);
+    console.log('Payload ,', payLoad, url);
     return apiResponse.data;
   };
 
@@ -820,7 +828,7 @@ export default class DeveloperAPIClient extends RestClient {
   };
 
   getProductsUrl = () => {
-    return `${DEVELOPER_API_URL}/v1/roti/getProductsByCategory`;
+    return `${DEVELOPER_API_URL}/v1/catalog/getProductsByCategory`;
   };
 
   getProducts = async (UserMobile, category_id, Token, currentPage) => {
@@ -1632,23 +1640,25 @@ export default class DeveloperAPIClient extends RestClient {
   };
 
   getOrderstatsURL = () => {
-    return `${DEVELOPER_API_URL}/v1/roti/getOrderStats`;
+    return `${DEVELOPER_API_URL}/v1/order/getOrderStats`;
 
     // http://wroti.app/v1/roti/getOrdersByCustomer
   };
 
   getOrderstats = async UserMobile => {
     let url = this.getOrderstatsURL();
+    const token = await AsyncStorage.getItem('token');
     let apiResponse = await Api.post(
       url,
       {
         mobileNumber: UserMobile,
+        merchantToken: token,
       },
       '',
       '',
       {'Content-Type': 'application/json'},
     );
-    console.log('URL%%%%%%%%%%%%%%%%%%%%%%', url, apiResponse.data);
+    console.log('orderstats--------------->', url, apiResponse.data, token);
     console.log('PAYLOAD', {
       mobileNumber: UserMobile,
     });
@@ -1744,24 +1754,30 @@ export default class DeveloperAPIClient extends RestClient {
   };
 
   getOrderDetailsURL = () => {
-    return `${DEVELOPER_API_URL}/v1/roti/getOrdersByOrderId`;
+    return `${DEVELOPER_API_URL}/v1/order/getOrderByOrderId`;
 
     // http://wroti.app/v1/roti/getOrdersByCustomer
   };
 
   getOrderDetails = async (UserMobile, orderId) => {
     let url = this.getOrderDetailsURL();
-    let inputdata = {mobileNumber: UserMobile, order_id: orderId};
-    console.log('inputData', inputdata);
-    console.log('URL+++++++++++', url);
+    const token = await AsyncStorage.getItem('token');
+    let inputdata = {
+      mobileNumber: UserMobile,
+      order_id: orderId,
+      merchantToken: token,
+    };
+    console.log('inputDataget OrderDetails', inputdata);
+    console.log('URL+++++++++++ getOrderDetails', url);
     let apiResponse = await Api.post(url, inputdata, '', '', {
       'Content-Type': 'application/json',
     });
+    console.log('------apiResponse---->', apiResponse?.data);
     return apiResponse.data;
   };
 
   getOrdersHistoryURL = () => {
-    return `${DEVELOPER_API_URL}/v1/roti/getOrdersByCustomer`;
+    return `${DEVELOPER_API_URL}/v1/roti/getOrdersByMerchant`;
 
     // http://wroti.app/v1/roti/getOrdersByCustomer
   };
@@ -2106,7 +2122,7 @@ export default class DeveloperAPIClient extends RestClient {
     limit,
     offset,
   ) => {
-    let url = `${DEVELOPER_API_URL}/v1/roti/getOrdersByMobile`;
+    let url = `${DEVELOPER_API_URL}/v1/roti/getOrdersByMerchant`;
     let payLoad = {
       mobileNumber: merchantMobile,
       merchantToken: token,
@@ -2118,7 +2134,7 @@ export default class DeveloperAPIClient extends RestClient {
     let apiResponse = await Api.post(url, payLoad, '', '', {
       'Content-Type': 'application/json',
     });
-    return apiResponse.data;
+    return apiResponse;
   };
 
   getBanners = async (UserMobile, tag) => {

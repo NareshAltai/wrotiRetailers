@@ -146,7 +146,7 @@ const OrdersScreen = ({navigation, route}) => {
   };
   const openwhatsapp = () => {
     let productName = '';
-    for (let index = 0; index < ordersData.orders.products.length; index++) {
+    for (let index = 0; index < ordersData.orders.products?.length; index++) {
       const element = ordersData.orders.products[index];
       //console.log("element",element)
       productName = productName + '\r\n' + element.name;
@@ -457,7 +457,7 @@ const OrdersScreen = ({navigation, route}) => {
                             flex: 1,
                             textAlign: 'left',
                           }}>
-                          {ordersData.orders.order_info.payment_method}
+                          {ordersData.orders.order_info.payment_method || ''}
                         </Text>
                         <Text
                           style={{
@@ -467,7 +467,8 @@ const OrdersScreen = ({navigation, route}) => {
                             flex: 1,
                             textAlign: 'right',
                           }}>
-                          Total Items • {ordersData.orders.products.length}
+                          Total Items •{' '}
+                          {ordersData.orders.products?.length || '0'}
                         </Text>
                       </View>
                     </View>
@@ -484,18 +485,18 @@ const OrdersScreen = ({navigation, route}) => {
                     marginVertical: 5,
                   }}>
                   <View style={{margin: 5}} />
-                  {ordersData.orders.products &&
-                    ordersData.orders.products.map((val, i) => {
+                  {ordersData?.orders?.products &&
+                    ordersData?.orders?.products?.map((val, i) => {
                       /// console.log("name#",val.option[0].name)
                       if (
-                        val.option.length > 0 &&
-                        val.option[0] != undefined &&
-                        val.option[0].type == 'file' &&
+                        val?.option?.length > 0 &&
+                        val?.option[0] != undefined &&
+                        val?.option[0].type == 'file' &&
                         !showDownload
                       ) {
                         setShowDownload(true);
-                        setprescriptionImageUrl(val.option[0].value);
-                        setprescriptionName(val.option[0].name);
+                        setprescriptionImageUrl(val.option[0]?.value || '');
+                        setprescriptionName(val.option[0]?.name || '');
                       }
                       // if(val.option[0].value != )
                       return (
@@ -534,7 +535,7 @@ const OrdersScreen = ({navigation, route}) => {
                               {customizedModal && (
                                 <>
                                   {val &&
-                                    val.option.map(
+                                    val?.option?.map(
                                       (optionValue, optionIndex) => {
                                         return (
                                           <>
@@ -548,7 +549,7 @@ const OrdersScreen = ({navigation, route}) => {
                                                     fontFamily:
                                                       'Poppins-Medium',
                                                   }}>
-                                                  {optionValue.value}
+                                                  {optionValue?.value || ''}
                                                 </Text>
                                                 {/* <View style={{justifyContent:'flex-end',alignContent:'flex-end'}}> */}
                                                 <Text
@@ -559,7 +560,8 @@ const OrdersScreen = ({navigation, route}) => {
                                                       'Poppins-Medium',
                                                     marginLeft: 10,
                                                   }}>
-                                                  ( ₹ {optionValue.price} )
+                                                  ( ₹ {optionValue?.price || ''}{' '}
+                                                  )
                                                 </Text>
                                                 {/* </View> */}
                                               </View>
@@ -578,7 +580,7 @@ const OrdersScreen = ({navigation, route}) => {
                                 fontFamily: 'Poppins-Medium',
                                 marginLeft: 'auto',
                               }}>
-                              {val.quantity} x {val.price}
+                              {val.quantity || 0} x {val.price || 0}
                             </Text>
                           </View>
                         </View>
